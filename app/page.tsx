@@ -13,6 +13,9 @@ import { ClipLoader } from 'react-spinners';
 import { useSearchParams } from "next/navigation";
 import { accountt } from "./lib/appwrite";
 import Modal from 'react-modal';
+import VerifyEmailHandler from "./context/Verifyemailhandler";
+import { Suspense } from "react";
+
 
 type ErrorsType = {
   fullName?: string;
@@ -30,29 +33,10 @@ type LoginErrorsType = {
 
 export default function Home() {
 
-const searchParams = useSearchParams();
+
 Modal.setAppElement("body");
-useEffect(() => {
-  const userId = searchParams.get("userId");
-  const secret = searchParams.get("secret");
 
-  const verifyEmail = async () => {
-    if (!userId || !secret) return;
 
-    try {
-      await accountt.updateEmailVerification({
-        userId,
-        secret,
-      });
-
-      alert("Email verified successfully ✅");
-    } catch (error) {
-      console.log("Verification failed:", error);
-    }
-  };
-
-  verifyEmail();
-}, [searchParams]);
 
  
 
@@ -60,11 +44,7 @@ useEffect(() => {
   const { loading, isLogged,setUser,setIsLogged,user } = useGlobalContext()
 
 
-useEffect(() => {
-    if (isLogged && !loading) {
-      navigate.push("/success");
-    }
-  }, [isLogged,loading]);
+
 
   const navigate = useRouter();
  const [isSubmitting, setSubmitting] = useState(false);;
@@ -258,6 +238,9 @@ const handleFacebookLogin = () => {
 
   return (
     <div className="  font-inter ">
+       <Suspense fallback={<p>Verifying email...</p>}>
+      <VerifyEmailHandler />
+    </Suspense>
 { account=== 'login' ? (
       <div className="h-screen w-screen flex flex-col justify-center items-center  gap-12 "
        style={{
