@@ -238,7 +238,7 @@ const handleFacebookLogin = () => {
 
   return (
     <div className="  font-inter ">
-       <Suspense fallback={<p>Verifying email...</p>}>
+       <Suspense fallback={<p></p>}>
       <VerifyEmailHandler />
     </Suspense>
 { account=== 'login' ? (
