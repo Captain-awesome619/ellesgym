@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
         password,
       });
 alert("Password reset successful. Please log in with your new password.");
-      router.push("/");
+      router.push("https://ellesgym.onrender.com");
     } catch (err: any) {
       setError(err?.message || "Failed to reset password.");
     } finally {

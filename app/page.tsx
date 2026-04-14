@@ -191,7 +191,7 @@ const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
       setIsLogged(true);
 
       alert("Success User signed in successfully");
-      navigate.push("success");
+      navigate.push("https://ellesgym.onrender.com/success");
     } catch (error) {
       alert("Error signing in");
     } finally {
@@ -216,7 +216,7 @@ const handleForgotPassword = async () => {
 
     await accountt.createRecovery({
       email: recoveryEmail,
-      url: "http://localhost:3000/forgotpassword",
+      url: "https://ellesgym.onrender.com/forgotpassword",
     });
 
     alert("Reset link sent to your email");

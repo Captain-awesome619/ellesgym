@@ -9,7 +9,8 @@ import { Account,
 
      export const appwriteConfig = {
         endpoint: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT as string,
-        platform:process.env.NEXT_PUBLIC_APPWRITE_PLATFORM as string,
+        platform1:process.env.NEXT_PUBLIC_APPWRITE_PLATFORM1 as string,
+        platform2:process.env.NEXT_PUBLIC_APPWRITE_PLATFORM2 as string,
         projectId:process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID as string,
         databaseId:process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,
         userCollectionId:process.env.NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID as string,  
@@ -63,7 +64,7 @@ export async function createUser(
 
     // 4. Send verification email (requires session)
   await accountt.createEmailVerification({
-  url: "http://localhost:3000",
+  url: "https://ellesgym.onrender.com/",
 });
 
     // 5. OPTIONAL: log user out immediately if you don't want them signed in
@@ -88,30 +89,37 @@ export async function createUser(
 
 export async function signIn(email: string, password: string) {
   try {
-    // 1. Create session
-    await accountt.createEmailPasswordSession({email, password});
+    // 1. Check if a session already exists
+    try {
+      await accountt.get(); // will succeed if logged in
 
-    // 2. Get user
+      // If we reach here → session exists → delete it
+      await accountt.deleteSession("current");
+    } catch {
+      // No active session → ignore
+    }
+
+    // 2. Create new session
+    await accountt.createEmailPasswordSession({ email, password });
+
+    // 3. Get user
     const user = await accountt.get();
 
-    // 3. If NOT verified → log out immediately
+    // 4. Check verification
     if (!user.emailVerification) {
       await accountt.deleteSession("current");
 
       alert("Please verify your email before logging in.");
-
       return null;
     }
 
-    // 4. return verified user
     return user;
+
   } catch (error) {
     console.error(error);
     throw new Error("Invalid email or password");
   }
 }
-
-
   export async function getAccount() {
     try {
       const currentAccount = await accountt.get();
@@ -150,8 +158,8 @@ export async function getCurrentUser() {
  export const signInWithGoogle = () => {
   accountt.createOAuth2Session({
     provider: "google" as any,
-    success: "http://localhost:3000/success",
-    failure: "http://localhost:3000/login",
+    success: "https://ellesgym.onrender.com/success",
+    failure: "https://ellesgym.onrender.com",
   });
 };
 
