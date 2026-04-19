@@ -191,7 +191,7 @@ const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
       setIsLogged(true);
 
       alert("Success User signed in successfully");
-      navigate.push("https://ellesgym.onrender.com/success");
+      navigate.push("/success");
     } catch (error) {
       alert("Error signing in");
     } finally {
