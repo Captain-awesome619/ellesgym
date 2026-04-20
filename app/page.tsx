@@ -5,7 +5,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useState,useEffect } from "react";
 import google from '../public/google.svg'
 import facebook from '../public/facebook.svg'
-import { getCurrentUser, signInWithGoogle } from "./lib/appwrite";
+import { appwriteConfig, getCurrentUser, signInWithGoogle } from "./lib/appwrite";
 import { createUser, signIn } from "./lib/appwrite";
 import { useGlobalContext } from "./context/globalprovider";
 import { useRouter } from 'next/navigation'
@@ -15,7 +15,8 @@ import { accountt } from "./lib/appwrite";
 import Modal from 'react-modal';
 import VerifyEmailHandler from "./context/Verifyemailhandler";
 import { Suspense } from "react";
-
+import { databases } from "./lib/appwrite";
+import { Query } from "appwrite";
 
 type ErrorsType = {
   fullName?: string;
@@ -176,29 +177,57 @@ console.log(fullName, email, password)
 }
 
 
+async function checkUserBio(userId: string) {
+  try {
+    const res = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.bioID,
+      [
+        Query.equal("users", userId)
+      ]
+    );
+
+    return res.documents.length > 0;
+  } catch (error) {
+    console.error("Error checking bio:", error);
+    return false;
+  }
+}
 
 const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
   e.preventDefault();
+
   if (!validateLogin()) {
-  alert("Error: Please fill in all fields correctly");
+    alert("Error: Please fill in all fields correctly");
+    return;
   }
-    
-    setSubmitting(true);
-    try {
-      await signIn(loginEmail, loginPassword);
-      const result = await getCurrentUser();
-      setUser(result);
-      setIsLogged(true);
 
-      alert("Success User signed in successfully");
+  setSubmitting(true);
+
+  try {
+    const user = await signIn(loginEmail, loginPassword);
+    if (!user) return;
+
+    setUser(user);
+    setIsLogged(true);
+
+    const hasBio = await checkUserBio(user.$id);
+
+    alert("Success User signed in successfully");
+
+    if (hasBio) {
+      navigate.push("/Dashboard");
+    } else {
       navigate.push("/success");
-    } catch (error) {
-      alert("Error signing in");
-    } finally {
-      setSubmitting(false);
     }
-};
 
+  } catch (error) {
+    console.error(error);
+    alert("Error signing in");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
 const handleForgotPassword = async () => {
   const error = validateRecoveryEmail(recoveryEmail);

@@ -15,6 +15,7 @@ import { Account,
         databaseId:process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID as string,
         userCollectionId:process.env.NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID as string,  
          storageId:process.env.NEXT_PUBLIC_APPWRITE_STORAGE_ID as string,
+         bioID:process.env.NEXT_PUBLIC_APPWRITE_BIO_COLLECTION_ID as string,
       };
       const client = new Client();
 client
@@ -120,6 +121,9 @@ export async function signIn(email: string, password: string) {
     throw new Error("Invalid email or password");
   }
 }
+
+
+
   export async function getAccount() {
     try {
       const currentAccount = await accountt.get();
@@ -158,7 +162,7 @@ export async function getCurrentUser() {
  export const signInWithGoogle = () => {
   accountt.createOAuth2Session({
     provider: "google" as any,
-    success: "https://ellesgym.onrender.com/success",
+  success: "https://ellesgym.onrender.com/Oauth", // 👈 change this
     failure: "https://ellesgym.onrender.com/",
   });
 };

@@ -1,10 +1,14 @@
 "use client";
-
 import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
 import { handleGoogleLogin } from "../lib/appwrite";// adjust path
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { equipmentOptions, daysOptions, planOptions, experiencee} from "./data";// 
+import { useGlobalContext } from "../context/globalprovider";
+import { databases } from "../lib/appwrite";
+import { ID } from "appwrite";
+import { appwriteConfig } from "../lib/appwrite";
+import { ClipLoader } from "react-spinners";
 export default function SuccessPage() {
 
 
@@ -28,6 +32,7 @@ const [plan, setPlan] = useState<string>('');
 const [equipment, setEquipment] = useState<string>('');
 const [day, setDay] = useState<string>('');
 const [experience, setExperience] = useState<string>('');
+const [loader, setLoader] = useState(false);
  const [value, setValue] = useState<number>(45);
  const min = 0;
   const max = 90;
@@ -53,17 +58,7 @@ function Next() {
   }
 
   // Stage 3 validation
-  if (stage === 3) {
-    if (
-      formData.age === "" ||
-      formData.weight === "" ||
-      formData.height === "" ||
-      !formData.diet
-    ) {
-      alert("Please fill in all required fields before continuing");
-      return;
-    }
-  }``
+  
 
   // If all validations pass → move forward
   if (stage === 3) {
@@ -89,7 +84,7 @@ const [formData, setFormData] = useState<FormData>({
   age: "",
   injuries: "",
   weight: "",
-  diet: "",
+  diet: "Vegetarian",
   height: "",
 });
 
@@ -99,6 +94,61 @@ const backgroundMap: Record<number, string> = {
   3: "bg2.jpg",
 };
 
+
+  const { user } = useGlobalContext()
+
+
+ async function submitBio() {
+  setLoader(true); // ✅ start loading
+
+  try {
+    // Validation
+    if (stage === 3) {
+      if (
+        formData.age === "" ||
+        formData.weight === "" ||
+        formData.height === "" ||
+        !formData.diet
+      ) {
+        alert("Please fill in all required fields before continuing");
+        return; // ❗ still safe because of finally
+      }
+    }
+
+    // Create document
+    await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.bioID,
+        user.$id,
+      {
+        users: user?.$id,
+
+        goal: plan,
+        equipment: equipment,
+        schedule: day,
+        experience: experience,
+        duration: value,
+
+        age: formData.age,
+        injuries: formData.injuries,
+        diet: formData.diet,
+        height: formData.height,
+        weight: formData.weight,
+      }
+    );
+
+    console.log("Bio saved successfully");
+    alert("Bio saved successfully. Redirecting to dashboard...");
+
+    router.push("/Dashboard");
+
+  } catch (error) {
+    console.error("Error saving bio:", error);
+    alert("Something went wrong while saving your data");
+  } finally {
+    setLoader(false); // ✅ ALWAYS stops loader
+  }
+}
 
   return(
   <div
@@ -365,7 +415,7 @@ const backgroundMap: Record<number, string> = {
     className="w-full h-10 pl-4 pr-12 rounded-md border-2 bg-transparent text-white cursor-pointer"
   >
   
-    <option value="Vegan" className="text-black">Vegan</option>
+  
     <option value="Vegetarian" className="text-black">Vegetarian</option>
     <option value="Pescatarian" className="text-black">Pescatarian</option>
     <option value="Balanced" className="text-black">Balanced</option>
@@ -390,13 +440,28 @@ const backgroundMap: Record<number, string> = {
 </div>
 
    </div>)}
-<div className="flex items-center justify-center mt-3">
+{stage === 3 ? <div className="flex items-center justify-center mt-3">
+  <button
+    onClick={submitBio}
+    disabled={loader}
+    className="w-70 h-13 flex items-center justify-center rounded-2xl bg-[#2ED843] cursor-pointer text-black font-bold lg:text-[18px] text-[16px] border-2 border-[#2ED843] hover:bg-white duration-200 disabled:opacity-70"
+  >
+    {loader ? (
+      <ClipLoader size={20} color="black" />
+    ) : (
+      "Continue"
+    )}
+  </button>
+</div> : 
+   <div className="flex items-center justify-center mt-3">
     <button className="w-70 h-13 text-bold rounded-2xl bg-[#2ED843] cursor-pointer text-black font-bold lg:text-[18px] text-[16px] border-2 border-[#2ED843] hover:bg-white duration-200 "
     onClick={Next}
     >
       Continue
     </button>
   </div>
+}
+
   </div>
 </div>
   )
