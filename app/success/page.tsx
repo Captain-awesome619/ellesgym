@@ -28,9 +28,9 @@ export default function SuccessPage() {
   }, []);
 
 const [stage, setStage] = useState<number>(1);
-const [plan, setPlan] = useState<string>('');
-const [equipment, setEquipment] = useState<string>('');
-const [day, setDay] = useState<string>('');
+const [plan, setPlan] = useState<string[]>([]);
+const [equipment, setEquipment] = useState<string[]>([]);
+const [day, setDay] = useState<string[]>([]); 
 const [experience, setExperience] = useState<string>('');
 const [loader, setLoader] = useState(false);
  const [value, setValue] = useState<number>(45);
@@ -43,7 +43,7 @@ const [loader, setLoader] = useState(false);
 function Next() {
   // Stage 1 validation
   if (stage === 1) {
-    if (!plan) {
+    if (plan.length === 0) {
       alert("Please select a goal before continuing");
       return;
     }
@@ -51,7 +51,7 @@ function Next() {
 
   // Stage 2 validation
   if (stage === 2) {
-    if (!equipment || !day || !experience || value === 0) {
+    if (equipment.length === 0|| day.length === 0 || !experience || value === 0) {
       alert("Please select all options (equipment, schedule, and experience)");
       return;
     }
@@ -111,11 +111,10 @@ const backgroundMap: Record<number, string> = {
         !formData.diet
       ) {
         alert("Please fill in all required fields before continuing");
-        return; // ❗ still safe because of finally
+        return; 
       }
     }
 
-    // Create document
     await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.bioID,
@@ -146,7 +145,7 @@ const backgroundMap: Record<number, string> = {
     console.error("Error saving bio:", error);
     alert("Something went wrong while saving your data");
   } finally {
-    setLoader(false); // ✅ ALWAYS stops loader
+    setLoader(false); 
   }
 }
 
@@ -210,7 +209,7 @@ const backgroundMap: Record<number, string> = {
     <div
       key={item.value}
       className={`w-60 h-60 rounded-2xl duration-200 flex items-end justify-center border-4 cursor-pointer ${
-        plan === item.value ? " border-[#2ED843]" : ""
+       plan.includes(item.value)  ? " border-[#2ED843]" : ""
       }`}
       style={{
         backgroundImage: `url('${item.image}')`,
@@ -219,7 +218,13 @@ const backgroundMap: Record<number, string> = {
         backgroundRepeat: "no-repeat",
       }}
       onClick={() => {
-        setPlan(item.value);
+        if (plan.includes(item.value)) {
+          // remove if already selected
+          setPlan(plan.filter((p) => p !== item.value));
+        } else {
+          // add if not selected
+          setPlan([...plan, item.value]);
+        }
       }}
     >
       <h3 className="font-bold lg:text-[25px] text-[18px] text-white pb-1">
@@ -237,19 +242,27 @@ const backgroundMap: Record<number, string> = {
       <h3 className="font-bold lg:text-[30px] ">Equipment </h3>
 
 <div className="grid grid-cols-2 lg:grid-cols-3 gap-5">
-  {equipmentOptions.map((item) => (
-    <div
-      key={item}
-      className={`lg:w-65   lg:text-[24px] h-13 rounded-xl border-2 flex items-center justify-center cursor-pointer ${
-        equipment === item ? " border-4 border-[#2ED843]" : "border-white"
-      }`}
-      onClick={() => {
-        setEquipment(item);
-      }}
-    >
-      {item}
-    </div>
-  ))}
+{equipmentOptions.map((item) => (
+  <div
+    key={item}
+    className={`lg:w-65 lg:text-[24px] h-13 rounded-xl border-2 flex items-center justify-center cursor-pointer ${
+      equipment.includes(item)
+        ? "border-4 border-[#2ED843]"
+        : "border-white"
+    }`}
+    onClick={() => {
+      if (equipment.includes(item)) {
+        // remove if already selected
+        setEquipment(equipment.filter((e) => e !== item));
+      } else {
+        // add if not selected
+        setEquipment([...equipment, item]);
+      }
+    }}
+  >
+    {item}
+  </div>
+))}
 </div>
     </div>
 
@@ -258,20 +271,27 @@ const backgroundMap: Record<number, string> = {
 
          <h3 className="font-bold lg:text-[30px] ">Weekly Schedule</h3>
 
-        <div className="grid lg:grid-cols-7  grid-cols-5 gap-5">
+      <div className="grid lg:grid-cols-7  grid-cols-5 gap-5">
   {daysOptions.map((item, index) => (
     <div
       key={index}
       className={`font-normal lg:text-[24] rounded-xl cursor-pointer text-white flex items-center justify-center w-14 h-14 border-2 ${
-        day === item.value ? " border-4 border-[#2ED843]" : "border-white"
+        day.includes(item.value) ? " border-4 border-[#2ED843]" : "border-white"
       }`}
       onClick={() => {
-        setDay(item.value);
+        if (day.includes(item.value)) {
+          // remove if already selected
+          setDay(day.filter((d) => d !== item.value));
+        } else {
+          // add if not selected
+          setDay([...day, item.value]);
+        }
       }}
     >
       {item.label}
     </div>
   ))}
+  
 </div>
        </div>
 
@@ -334,7 +354,7 @@ const backgroundMap: Record<number, string> = {
               left: `calc(${percentage}% - 12px)`,
             }}
           >
-            {value}
+            {value} min
           </div>
 
           {/* Invisible input */}
