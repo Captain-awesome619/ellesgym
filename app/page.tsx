@@ -205,13 +205,20 @@ const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
   setSubmitting(true);
 
   try {
-    const user = await signIn(loginEmail, loginPassword);
-    if (!user) return;
+    const signedInUser = await signIn(loginEmail, loginPassword);
+    if (!signedInUser) return;
 
-    setUser(user);
+    // Get fresh user after session creation
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      throw new Error("Could not fetch current user");
+    }
+
+    setUser(currentUser);
     setIsLogged(true);
 
-    const hasBio = await checkUserBio(user.$id);
+    const hasBio = await checkUserBio(currentUser.$id);
 
     alert("Success User signed in successfully");
 
@@ -228,7 +235,6 @@ const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     setSubmitting(false);
   }
 };
-
 const handleForgotPassword = async () => {
   const error = validateRecoveryEmail(recoveryEmail);
 
