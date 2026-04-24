@@ -18,6 +18,9 @@ import {
 import dashicon from "../../public/dashicon.svg";
 import Image from "next/image";
 import { useGlobalContext } from "../context/globalprovider";
+import { IoNotifications } from "react-icons/io5";
+
+
 
 const navItems = [
   { name: "Dashboard", icon: FiHome },
@@ -46,9 +49,14 @@ export default function FitnessDashboard() {
     };
   }, [menuOpen]);
 
+
+ const { loading, isLogged,setUser,setIsLogged,user } = useGlobalContext()
+
   return (
     <div className="relative h-screen w-screen flex overflow-hidden">
-      {/* Background Image */}
+     
+      {console.log(user)}
+      {console.log(user?.avatar)}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -83,7 +91,7 @@ export default function FitnessDashboard() {
           </div>
 
           {/* Middle */}
-          <nav className="flex flex-col gap-4 px-4">
+          <nav className="flex flex-col gap-3 px-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = selected === item.name;
@@ -109,7 +117,25 @@ export default function FitnessDashboard() {
           </nav>
 
           {/* Bottom */}
-          <div className="p-6 text-white">User Details</div>
+          <div className="p-6 text-white border border-gray-600 lg:h-20 mb-4 w-full flex ">
+            
+          <div className="flex items-center justify-center gap-3">
+{user?.avatar ? (
+  <Image
+    src={user.avatar}
+    alt="User Avatar"
+    width={40}
+    height={40}
+    className="rounded-full "
+  />
+) :  <div className="w-10 h-10 rounded-full bg-gray-500" />}
+<div className="flex flex-col">
+<h4 className="text-[15px] font-normal text-white">{user?.fullname}</h4>
+<h4 className="text-[15px] font-normal text-white">{user?.email}</h4>
+</div>
+          </div>
+            
+            </div>
         </aside>
 
         {/* Main Area */}
@@ -125,9 +151,19 @@ export default function FitnessDashboard() {
             </button>
 
             <div className="ml-auto flex items-center gap-5">
-              <FiBell className="text-white text-2xl cursor-pointer" />
+              
               <FiSettings className="text-white text-2xl cursor-pointer" />
-              <div className="w-10 h-10 rounded-full bg-gray-500" />
+              <IoNotifications className="text-white text-2xl cursor-pointer" />
+              {user?.avatar ? (
+  <Image
+    src={user.avatar}
+    alt="User Avatar"
+    width={40}
+    height={40}
+    className="rounded-full "
+  />
+) :  <div className="w-10 h-10 rounded-full bg-gray-500" />}
+             
             </div>
           </header>
 
