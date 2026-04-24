@@ -55,8 +55,7 @@ export default function FitnessDashboard() {
   return (
     <div className="relative h-screen w-screen flex overflow-hidden">
      
-      {console.log(user)}
-      {console.log(user?.avatar)}
+     
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
