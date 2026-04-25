@@ -52,6 +52,10 @@ export default function FitnessDashboard() {
 
  const { loading, isLogged,setUser,setIsLogged,user } = useGlobalContext()
 
+const initial = user?.fullname?.trim()?.charAt(0)?.toUpperCase() || "";
+const initial2 = user?.name?.trim()?.charAt(0)?.toUpperCase() || "";
+
+
   return (
     <div className="relative h-screen w-screen flex overflow-hidden">
      
@@ -81,16 +85,17 @@ export default function FitnessDashboard() {
           className={`fixed lg:static top-0 left-0 z-40 h-screen w-72 bg-[#1E232B66] backdrop-blur-md flex flex-col justify-between transform transition-transform duration-300
           ${menuOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
         >
+         
           {/* Top */}
-          <div className="p-6 flex items-center gap-3">
-            <Image src={dashicon} alt="Dashboard Icon" className="w-5 h-5" />
-            <h1 className="text-white lg:text-[30px] text-[18px] font-bold">
+          <div className="p-6 flex items-center gap-2 lg:gap-1">
+            <Image src={dashicon} alt="Dashboard Icon" className="lg:w-10 lg:h-7 w-5 h-5" />
+            <h1 className="text-white lg:text-[30px] text-[20px] font-bold">
               Fitness
             </h1>
           </div>
 
           {/* Middle */}
-          <nav className="flex flex-col gap-3 px-4">
+          <nav className="flex flex-col gap-4 lg:gap-3 px-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = selected === item.name;
@@ -116,21 +121,17 @@ export default function FitnessDashboard() {
           </nav>
 
           {/* Bottom */}
-          <div className="p-6 text-white border border-gray-600 lg:h-20 mb-4 w-full flex ">
+          <div className="p-6 text-white border border-gray-600 lg:h-20 mb-6 w-full flex ">
             
           <div className="flex items-center justify-center gap-3">
-{user?.avatar ? (
-  <Image
-    src={user.avatar}
-    alt="User Avatar"
-    width={40}
-    height={40}
-    className="rounded-full "
-  />
+{user ? (
+   <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-[#2ED843] flex  items-center justify-center lg:text-[20px] text-[17px] text-black font-bold" >
+    {initial2 || initial}
+     </div>
 ) :  <div className="w-10 h-10 rounded-full bg-gray-500" />}
 <div className="flex flex-col">
-<h4 className="text-[15px] font-normal text-white">{user?.fullname}</h4>
-<h4 className="text-[15px] font-normal text-white">{user?.email}</h4>
+<h4 className="text-[15px] font-normal text-white">{user?.fullname || user?.name}</h4>
+<h4 className="text-[13px] font-normal text-white">{user?.email}</h4>
 </div>
           </div>
             
@@ -146,23 +147,18 @@ export default function FitnessDashboard() {
               onClick={() => setMenuOpen(!menuOpen)}
               className="lg:hidden text-[#2ED843] text-3xl"
             >
-              {menuOpen ? <FiX /> : <FiMenu />}
+              {menuOpen  ? <FiX size={20} /> : <FiMenu size={20} />}
             </button>
 
             <div className="ml-auto flex items-center gap-5">
               
               <FiSettings className="text-white text-2xl cursor-pointer" />
               <IoNotifications className="text-white text-2xl cursor-pointer" />
-              {user?.avatar ? (
-  <Image
-    src={user.avatar}
-    alt="User Avatar"
-    width={40}
-    height={40}
-    className="rounded-full "
-  />
+              {user ? (
+   <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-[#2ED843] flex  items-center justify-center lg:text-[20px] text-[17px] font-bold  text-black" >
+    {initial2 || initial}
+     </div>
 ) :  <div className="w-10 h-10 rounded-full bg-gray-500" />}
-             
             </div>
           </header>
 

@@ -163,7 +163,7 @@ export async function getCurrentUser() {
   accountt.createOAuth2Session({
     provider: "google" as any,
   success: "https://ellesgym.onrender.com/Oauth", // 👈 change this
-    failure: "https://ellesgym.onrender.com/",
+    failure: "https://ellesgym.onrender.com",
   });
 };
 

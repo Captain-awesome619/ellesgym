@@ -1,7 +1,7 @@
 "use client";
-import { useEffect,useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import { useRouter } from "next/navigation";
-import { handleGoogleLogin } from "../lib/appwrite";// adjust path
+import { accountt, handleGoogleLogin } from "../lib/appwrite";// adjust path
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import { equipmentOptions, daysOptions, planOptions, experiencee} from "./data";// 
 import { useGlobalContext } from "../context/globalprovider";
@@ -9,23 +9,12 @@ import { databases } from "../lib/appwrite";
 import { ID } from "appwrite";
 import { appwriteConfig } from "../lib/appwrite";
 import { ClipLoader } from "react-spinners";
-export default function SuccessPage() {
 
+export default function SuccessPage() {
+  const { user} = useGlobalContext()
 
   const router = useRouter();
 
-  useEffect(() => {
-    const run = async () => {
-      try {
-        await handleGoogleLogin();
-        console.log("Google login successful");
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    run();
-  }, []);
 
 const [stage, setStage] = useState<number>(1);
 const [plan, setPlan] = useState<string[]>([]);
@@ -95,7 +84,7 @@ const backgroundMap: Record<number, string> = {
 };
 
 
-  const { user } = useGlobalContext()
+
 
 
  async function submitBio() {
@@ -139,7 +128,7 @@ const backgroundMap: Record<number, string> = {
     console.log("Bio saved successfully");
     alert("Bio saved successfully. Redirecting to dashboard...");
 
-    router.push("/Dashboard");
+    router.push("https://ellesgym.onrender.com/Dashboard");
 
   } catch (error) {
     console.error("Error saving bio:", error);
@@ -159,7 +148,7 @@ const backgroundMap: Record<number, string> = {
     backgroundRepeat: "no-repeat",
   }}
 >
- 
+
   <div className="absolute inset-0 bg-black/90"></div>
 
  
