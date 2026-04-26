@@ -23,15 +23,15 @@ export default function OAuthPage() {
 
     const syncUserProfile = async () => {
       try {
-        // ⛔ wait for auth hydration
+      
         const authUser = user?.$id ? user : null;
 
-        // fallback: ensure we always have session user
+       
         const sessionUser = authUser || (await refreshUser());
 
         if (!sessionUser?.$id) return;
 
-        // check if profile exists
+      
         try {
           await databases.getDocument(
             appwriteConfig.databaseId,
@@ -44,7 +44,7 @@ export default function OAuthPage() {
           await refreshUser(); // sync global state
           return;
         } catch {
-          // not found → create profile
+     
         }
 
         await databases.createDocument(
@@ -60,26 +60,19 @@ export default function OAuthPage() {
 
         console.log("User profile created");
 
-        await refreshUser(); // sync after creation
+        await refreshUser(); 
       } catch (err) {
         console.error("Profile sync error:", err);
       }
     };
-
     syncUserProfile();
   }, []);
 
-  // -----------------------------
-  // 2. HANDLE REDIRECT LOGIC
-  // -----------------------------
+
   useEffect(() => {
     const run = async () => {
-      // ⛔ wait until auth is ready
       if (loading) return;
-
-      // ⛔ still no user → stay on loader
-      if (!user?.$id) return;
-
+  if (!user?.$id) return;
       try {
         const res = await databases.listDocuments(
           appwriteConfig.databaseId,
@@ -99,13 +92,10 @@ export default function OAuthPage() {
         router.replace("/success");
       }
     };
-
     run();
   }, [user, loading, router]);
 
-  // -----------------------------
-  // 3. UI LOADING STATE
-  // -----------------------------
+  
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-black">
       <div className="flex flex-col items-center gap-4 text-white">

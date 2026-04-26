@@ -19,7 +19,7 @@ import dashicon from "../../public/dashicon.svg";
 import Image from "next/image";
 import { useGlobalContext } from "../context/globalprovider";
 import { IoNotifications } from "react-icons/io5";
-
+import Dashboard from "../components/dashboard";
 
 
 const navItems = [
@@ -165,8 +165,8 @@ const initial2 = user?.name?.trim()?.charAt(0)?.toUpperCase() || "";
           {/* Scrollable Content */}
           <main className="flex-1 overflow-y-auto p-6">
             {selected === "Dashboard" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
-                Dashboard Page Content
+              <div className=" ">
+            <Dashboard user={user} />
               </div>
             )}
 
