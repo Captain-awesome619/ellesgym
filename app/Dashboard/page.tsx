@@ -20,7 +20,7 @@ import Image from "next/image";
 import { useGlobalContext } from "../context/globalprovider";
 import { IoNotifications } from "react-icons/io5";
 import Dashboard from "../components/dashboard";
-
+import Planneer from "../components/planneer";
 
 const navItems = [
   { name: "Dashboard", icon: FiHome },
@@ -55,6 +55,10 @@ export default function FitnessDashboard() {
 const initial = user?.fullname?.trim()?.charAt(0)?.toUpperCase() || "";
 const initial2 = user?.name?.trim()?.charAt(0)?.toUpperCase() || "";
 
+
+function Start() {
+  setSelected('Planner')
+}
 
   return (
     <div className="relative h-screen w-screen flex overflow-hidden">
@@ -166,13 +170,13 @@ const initial2 = user?.name?.trim()?.charAt(0)?.toUpperCase() || "";
           <main className="flex-1 overflow-y-auto p-6">
             {selected === "Dashboard" && (
               <div className=" ">
-            <Dashboard user={user} />
+            <Dashboard user={user} start={Start} />
               </div>
             )}
 
             {selected === "Planner" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
-                Planner Page Content
+              <div className="">
+                <Planneer />
               </div>
             )}
 
