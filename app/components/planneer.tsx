@@ -150,7 +150,7 @@ const Planneer = ({ user }: { user: any }) => {
           <div className="h-36 w-32 sm:h-40 sm:w-36 rounded-xl bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black flex items-center justify-center">
             <button
               onClick={() => setIsOpen(true)}
-              className="border-2 border-dotted border-gray-500 p-4 w-[90%] h-[90%] rounded-lg flex flex-col items-center justify-end"
+              className="border-2 border-dotted border-gray-500 p-4 w-[90%] h-[90%] rounded-lg flex flex-col items-center justify-end cursor-pointer"
             >
               <FaPlus className="text-white mb-2" />
               <p className="text-white text-sm">Add Workout</p>
@@ -174,10 +174,12 @@ const Planneer = ({ user }: { user: any }) => {
                 ))}
               </div>
 
-              <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 mt-2">
+              <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 mt-2 border-b lg:border-0 lg:pb-2 pb-4 ">
                 {week.map((item, i) => (
                   <div key={i} className="grid">
-
+<p key={i} className="text-[#2ED843] text-[12px] font-bold  lg:hidden flex mb-1">
+                    {new Date(item.date).toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}
+                  </p>
                     <div
                       onClick={() => setSelectedDay(item)} // 🔥 CLICK HANDLER
                       className=" grid gap-2 bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black rounded-xl p-2 text-white min-h-28 cursor-pointer hover:scale-[1.02] transition"
@@ -218,11 +220,9 @@ const Planneer = ({ user }: { user: any }) => {
         {selectedDay && (
           <div className="flex flex-col gap-4">
 
-            <h2 className="text-xl font-bold text-center text-[#2ED843]">
-              {selectedDay.day}
-            </h2>
+           
 
-            <p className="text-center text-gray-400">
+            <p  className="text-xl font-bold text-center text-[#2ED843]">
               {selectedDay.date}
             </p>
 
