@@ -72,7 +72,7 @@ function Start() {
       />
 
       {/* Dark + Blur Overlay */}
-      <div className="absolute inset-0 bg-[#121417]/95 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-[#121417]/88 backdrop-blur-md" />
 
       {/* Main Content */}
       <div className="relative z-10 h-screen w-screen flex overflow-hidden">
