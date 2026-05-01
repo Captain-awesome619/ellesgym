@@ -176,7 +176,7 @@ function Start() {
 
             {selected === "Planner" && (
               <div className="">
-                <Planneer />
+                <Planneer user={user} />
               </div>
             )}
 
