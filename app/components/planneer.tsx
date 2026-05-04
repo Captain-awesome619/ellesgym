@@ -13,6 +13,10 @@ import {
   GiMeditation,
   GiRunningShoe,
 } from "react-icons/gi";
+import { FaPause, FaPlay } from "react-icons/fa";
+import { useGlobalContext } from "../context/globalprovider";
+import { getSession } from "../lib/appwrite";
+import { ClipLoader } from "react-spinners";
 
 const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
@@ -60,9 +64,12 @@ const Planneer = ({ user }: { user: any }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [plan, setPlan] = useState<DayPlan[] | null>(null);
   const [data, setdata] = useState<any>(null);
-
-  // 🔥 NEW: selected day for modal
+  const [routine, setRoutine] = useState<any>(null);
+const [loading, setLoading] = useState(false);
   const [selectedDay, setSelectedDay] = useState<DayPlan | null>(null);
+const [timeLeft, setTimeLeft] = useState<number | null>(null);
+const [isRunning, setIsRunning] = useState(false);
+
 
   useEffect(() => {
     Modal.setAppElement("body");
@@ -78,10 +85,8 @@ const Planneer = ({ user }: { user: any }) => {
 
   const handleAssign = (selectedWorkouts: Record<string, string>) => {
     const calendar = getNextDays(28);
-
     const generated: DayPlan[] = calendar.map(({ date, day }) => {
       const workout = selectedWorkouts[day];
-
       if (!data?.schedule?.includes(day) || !workout) {
         return {
           day,
@@ -120,20 +125,16 @@ const Planneer = ({ user }: { user: any }) => {
       .toUpperCase();
   };
 
-  useEffect(() => {
-    if (!user?.$id) return;
+const fetchBioData = async () => {
+  if (!user?.$id) return;
 
-    const fetchPosts = async () => {
-      try {
-        const posts = await getBio(user.$id);
-        setdata(posts);
-      } catch (error) {
-        console.log("Fetching user bio failed:", error);
-      }
-    };
-
-    fetchPosts();
-  }, [user?.$id]);
+  try {
+    const posts = await getBio(user.$id);
+    setdata(posts);
+  } catch (error) {
+    console.log("Fetching user bio failed:", error);
+  }
+};
 
   const filteredExercises = Object.fromEntries(
     (data?.goal || [])
@@ -142,10 +143,185 @@ const Planneer = ({ user }: { user: any }) => {
       .map((goal: string) => [goal, EXERCISES[goal]])
   );
 
+
+ const fetchSessionData = async () => {
+  if (!user?.$id) return;
+
+  try {
+    const posts = await getSession(user.$id);
+    setRoutine(posts);
+
+    if (posts?.session?.length) {
+      const generatedPlan = buildPlanFromSession(posts.session);
+      setPlan(generatedPlan);
+    }
+  } catch (error) {
+    console.log("Fetching user session failed:", error);
+  }
+};
+
+useEffect(() => {
+  if (!user?.$id) return;
+
+  const fetchAll = async () => {
+    setLoading(true);
+    await Promise.all([fetchBioData(), fetchSessionData()]);
+    setLoading(false);
+  };
+
+  fetchAll();
+}, [user?.$id]);
+
+
+const buildPlanFromSession = (session: string[]): DayPlan[] | null => {
+  if (!session?.length) return null;
+
+  const parsed = session.map((item) => JSON.parse(item));
+
+  const sessionMap: Record<string, string> = {};
+
+  parsed.forEach(({ day, exercise }) => {
+    sessionMap[day] = exercise;
+  });
+
+  const calendar = getNextDays(28);
+
+  return calendar.map(({ date, day }) => {
+    const workout = sessionMap[day];
+
+    if (!workout) {
+      return {
+        day,
+        date: date.toDateString(),
+        type: "rest",
+      };
+    }
+
+    return {
+      day,
+      date: date.toDateString(),
+      type: "workout",
+      workout,
+      goal: findGoalByWorkout(workout),
+      duration: data?.duration,
+      completed: false,
+    };
+  });
+};
+
+
+
+
+const getStorageKey = (date: string) => `workout-timer-${date}`;
+
+const saveTimer = (date: string, payload: any) => {
+  localStorage.setItem(getStorageKey(date), JSON.stringify(payload));
+};
+
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+const Todayy = (dateString: string) => {
+  const today = new Date();
+  const d = new Date(dateString);
+  return (
+    today.getFullYear() === d.getFullYear() &&
+    today.getMonth() === d.getMonth() &&
+    today.getDate() === d.getDate()
+  );
+};
+useEffect(() => {
+  if (!selectedDay) return;
+
+  const saved = localStorage.getItem(getStorageKey(selectedDay.date));
+
+  if (!saved) {
+    setTimeLeft(null);
+    setIsRunning(false);
+    return;
+  }
+
+  const parsed = JSON.parse(saved);
+
+  if (parsed.isRunning) {
+    const elapsed = Math.floor((Date.now() - parsed.savedAt) / 1000);
+    const newTime = parsed.timeLeft - elapsed;
+
+    if (newTime > 0) {
+      setTimeLeft(newTime);
+      setIsRunning(true);
+    } else {
+      setTimeLeft(0);
+      setIsRunning(false);
+      localStorage.removeItem(getStorageKey(selectedDay.date));
+    }
+  } else {
+    setTimeLeft(parsed.timeLeft);
+    setIsRunning(false);
+  }
+}, [selectedDay]);
+
+
+useEffect(() => {
+  if (!isRunning || timeLeft === null) return;
+
+  if (timeLeft <= 0) {
+    setIsRunning(false);
+    if (selectedDay) {
+      localStorage.removeItem(getStorageKey(selectedDay.date));
+    }
+    return;
+  }
+
+  const interval = setInterval(() => {
+    setTimeLeft((prev) => (prev ? prev - 1 : 0));
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [isRunning, timeLeft, selectedDay]);
+
+
+const startWorkout = () => {
+  if (!data?.duration || !selectedDay) return;
+
+  const totalSeconds = data.duration * 60;
+
+  setTimeLeft(totalSeconds);
+  setIsRunning(true);
+
+  saveTimer(selectedDay.date, {
+    timeLeft: totalSeconds,
+    isRunning: true,
+    savedAt: Date.now(),
+  });
+};
+
+if (loading) {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <ClipLoader color="#2ED843" size={50} />
+    </div>
+  );
+}
+
+
+const isToday = (dateString: string) => {
+  const today = new Date();
+  const cardDate = new Date(dateString);
+
+  return (
+    today.getFullYear() === cardDate.getFullYear() &&
+    today.getMonth() === cardDate.getMonth() &&
+    today.getDate() === cardDate.getDate()
+  );
+};
   return (
     <div className="p-4 sm:p-6 min-h-screen">
 
-      {!plan ? (
+      {!plan && !routine?.session?.length ? (
         <div className="flex items-center justify-center h-[70vh]">
           <div className="h-36 w-32 sm:h-40 sm:w-36 rounded-xl bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black flex items-center justify-center">
             <button
@@ -163,7 +339,7 @@ const Planneer = ({ user }: { user: any }) => {
             {getMonthLabel()}
           </div>
 
-          {chunkIntoWeeks(plan).map((week, weekIndex) => (
+          {plan && chunkIntoWeeks(plan).map((week, weekIndex) => (
             <div key={weekIndex} className="mb-6 grid">
 
               <div className="hidden lg:grid grid-cols-7 border-t border-b border-gray-800 py-4">
@@ -180,10 +356,16 @@ const Planneer = ({ user }: { user: any }) => {
 <p key={i} className="text-[#2ED843] text-[12px] font-bold  lg:hidden flex mb-1">
                     {new Date(item.date).toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}
                   </p>
-                    <div
-                      onClick={() => setSelectedDay(item)} // 🔥 CLICK HANDLER
-                      className=" grid gap-2 bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black rounded-xl p-2 text-white min-h-28 cursor-pointer hover:scale-[1.02] transition"
-                    >
+                 <div
+  onClick={() => setSelectedDay(item)}
+  className={`relative grid gap-2 rounded-xl p-2 text-white min-h-28 cursor-pointer hover:scale-[1.02] transition
+    ${
+      isToday(item.date)
+        ? "today-card"
+        : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black"
+    }
+  `}
+>
                       <p className="text-[12px] mb-1">{item.date}</p>
 
                       {item.type === "rest" ? (
@@ -198,6 +380,8 @@ const Planneer = ({ user }: { user: any }) => {
                               GOAL_ICONS[item.goal as keyof typeof GOAL_ICONS] || GiMuscleUp;
                             return <Icon className="text-[#2ED843]" />;
                           })()}
+
+
                           <p className="text-xs font-semibold">{item.workout}</p>
                         </div>
                       )}
@@ -208,7 +392,12 @@ const Planneer = ({ user }: { user: any }) => {
             </div>
           ))}
         </div>
-      )}
+      )
+      
+      
+      }
+
+
 
       {/* 🔥 DETAIL MODAL */}
       <Modal
@@ -249,9 +438,61 @@ const Planneer = ({ user }: { user: any }) => {
                 </p>
 
                 <p className="text-sm">
-                  Duration: {selectedDay.duration} min
+                  Duration: {data?.duration} min
                 </p>
 
+
+
+
+{/* 🔥 TIMER SECTION */}
+{Todayy(selectedDay.date) && selectedDay.type === "workout" && (
+  <div className="mt-3 flex items-center justify-center gap-3">
+
+    {timeLeft === null ? (
+      <button
+        onClick={startWorkout}
+        className="bg-[#2ED843] text-black px-4 py-2 rounded-lg font-semibold"
+      >
+        Start Workout
+      </button>
+    ) : (
+      <div className="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-[#2ED843]">
+
+        <span className="text-[#2ED843] font-bold">
+          {formatTime(timeLeft)}
+        </span>
+
+        {isRunning ? (
+          <FaPause
+            className="cursor-pointer text-[#2ED843]"
+            onClick={() => {
+              setIsRunning(false);
+              saveTimer(selectedDay.date, {
+                timeLeft,
+                isRunning: false,
+                savedAt: Date.now(),
+              });
+            }}
+          />
+        ) : (
+          <FaPlay
+            className="cursor-pointer text-[#2ED843]"
+            onClick={() => {
+              setIsRunning(true);
+              saveTimer(selectedDay.date, {
+                timeLeft,
+                isRunning: true,
+                savedAt: Date.now(),
+              });
+            }}
+          />
+        )}
+
+      </div>
+    )}
+
+  </div>
+)}
                 {/* STATUS */}
                 <div className="mt-2 flex items-center justify-center gap-2">
 <p className="text-white font-bold text-[15px]">Status : </p>
@@ -271,7 +512,7 @@ const Planneer = ({ user }: { user: any }) => {
 <div className="flex items-center justify-center w-full">
             <button
               onClick={() => setSelectedDay(null)}
-              className="mt-4 bg-[#2ED843] text-black py-2 rounded-xl w-[50%] cursor-pointer"
+              className="mt-4 bg-white text-black py-2 rounded-xl w-[50%] cursor-pointer"
             >
               Close
             </button>
@@ -284,6 +525,7 @@ const Planneer = ({ user }: { user: any }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onFinish={handleAssign}
+        onsucess={fetchSessionData}
         days={data?.schedule}
         goals={data?.goals}
         duration={data?.duration}
@@ -292,5 +534,4 @@ const Planneer = ({ user }: { user: any }) => {
     </div>
   );
 };
-
 export default Planneer;

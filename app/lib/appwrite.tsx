@@ -16,6 +16,7 @@ import { Account,
         userCollectionId:process.env.NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID as string,  
          storageId:process.env.NEXT_PUBLIC_APPWRITE_STORAGE_ID as string,
          bioID:process.env.NEXT_PUBLIC_APPWRITE_BIO_COLLECTION_ID as string,
+         workoutplanID:process.env.NEXT_PUBLIC_APPWRITE_WORKOUT_COLLECTION_ID as string,
       };
       const client = new Client();
 client
@@ -207,5 +208,24 @@ export async function getBio(userId: string) {
   } catch (error) {
     console.log(error);
     throw new Error("Error getting user bio");
+  }
+}
+
+export async function getSession(userId: string) {
+  if (!userId || typeof userId !== "string" || userId.trim() === "") {
+    return;
+  }
+
+  try {
+    const doc = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.workoutplanID,
+      userId // ✅ direct lookup
+    );
+
+    return doc;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting user session");
   }
 }
