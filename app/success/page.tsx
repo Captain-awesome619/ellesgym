@@ -168,7 +168,10 @@ const backgroundMap: Record<number, string> = {
 </div>
 {stage === 1 && (<div className="flex flex-col gap-0 items-center">
 <h3 className="lg:text-[50px] text-[25px] font-semibold text-white">What's your primary goal?</h3>
+<div className="flex flex-col gap-0 items-center text-[#2ED843]">
 <h4 className="lg:text-[30px] text-[18px] font-normal text-white">This helps us tailor your workout plan</h4>
+<h5 >(a maximum of 3 workout plans can be chosen)</h5>
+</div>
   </div>
   )}
 {stage === 2 && (
@@ -206,15 +209,21 @@ const backgroundMap: Record<number, string> = {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-      onClick={() => {
-        if (plan.includes(item.value)) {
-          // remove if already selected
-          setPlan(plan.filter((p) => p !== item.value));
-        } else {
-          // add if not selected
-          setPlan([...plan, item.value]);
-        }
-      }}
+onClick={() => {
+  if (plan.includes(item.value)) {
+    // remove if already selected
+    setPlan(plan.filter((p) => p !== item.value));
+  } else {
+    if (plan.length < 3) {
+      setPlan([...plan, item.value]);
+    } else {
+      // replace LAST picked item
+      const newPlan = [...plan];
+      newPlan[2] = item.value; // overwrite last slot
+      setPlan(newPlan);
+    }
+  }
+}}
     >
       <h3 className="font-bold lg:text-[25px] text-[18px] text-white pb-1">
         {item.label}
