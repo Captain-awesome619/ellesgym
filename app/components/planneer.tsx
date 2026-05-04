@@ -415,100 +415,99 @@ const isToday = (dateString: string) => {
               {selectedDay.date}
             </p>
 
-            {selectedDay.type === "rest" ? (
-              <div className="text-center">
-                <IoBedOutline className="text-[#2ED843] text-3xl mx-auto mb-2" />
-                <p>Rest Day</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-3">
+  {selectedDay.type === "rest" ? (
+  <div className="text-center">
+    <IoBedOutline className="text-[#2ED843] text-3xl mx-auto mb-2" />
+    <p>Rest Day</p>
+  </div>
+) : (
+  <div className="flex flex-col items-center gap-3">
 
-                {(() => {
-                  const Icon =
-                    GOAL_ICONS[selectedDay.goal as keyof typeof GOAL_ICONS] || GiMuscleUp;
-                  return <Icon className="text-[#2ED843] text-3xl" />;
-                })()}
+    {(() => {
+      const Icon =
+        GOAL_ICONS[selectedDay.goal as keyof typeof GOAL_ICONS] || GiMuscleUp;
+      return <Icon className="text-[#2ED843] text-3xl" />;
+    })()}
 
-                <p className="text-lg font-semibold">
-                  {selectedDay.workout}
-                </p>
+    <p className="text-lg font-semibold">
+      {selectedDay.workout}
+    </p>
 
-                <p className="text-sm text-white font-bold">
-                  Goal: {selectedDay.goal}
-                </p>
+    <p className="text-sm text-white font-bold">
+      Goal: {selectedDay.goal}
+    </p>
 
-                <p className="text-sm">
-                  Duration: {data?.duration} min
-                </p>
+    <p className="text-sm">
+      Duration: {data?.duration} min
+    </p>
 
+    {/* 🔥 TIMER (ONLY WORKOUT DAYS) */}
+    {Todayy(selectedDay.date) && (
+      <div className="mt-3 flex items-center justify-center gap-3">
 
-
-
-{/* 🔥 TIMER SECTION */}
-{Todayy(selectedDay.date) && selectedDay.type === "workout" && (
-  <div className="mt-3 flex items-center justify-center gap-3">
-
-    {timeLeft === null ? (
-      <button
-        onClick={startWorkout}
-        className="bg-[#2ED843] text-black px-4 py-2 rounded-lg font-semibold"
-      >
-        Start Workout
-      </button>
-    ) : (
-      <div className="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-[#2ED843]">
-
-        <span className="text-[#2ED843] font-bold">
-          {formatTime(timeLeft)}
-        </span>
-
-        {isRunning ? (
-          <FaPause
-            className="cursor-pointer text-[#2ED843]"
-            onClick={() => {
-              setIsRunning(false);
-              saveTimer(selectedDay.date, {
-                timeLeft,
-                isRunning: false,
-                savedAt: Date.now(),
-              });
-            }}
-          />
+        {timeLeft === null ? (
+          <button
+            onClick={startWorkout}
+            className="bg-[#2ED843] text-black px-4 py-2 rounded-lg font-semibold"
+          >
+            Start Workout
+          </button>
         ) : (
-          <FaPlay
-            className="cursor-pointer text-[#2ED843]"
-            onClick={() => {
-              setIsRunning(true);
-              saveTimer(selectedDay.date, {
-                timeLeft,
-                isRunning: true,
-                savedAt: Date.now(),
-              });
-            }}
-          />
+          <div className="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-[#2ED843]">
+
+            <span className="text-[#2ED843] font-bold">
+              {formatTime(timeLeft)}
+            </span>
+
+            {isRunning ? (
+              <FaPause
+                className="cursor-pointer text-[#2ED843]"
+                onClick={() => {
+                  setIsRunning(false);
+                  saveTimer(selectedDay.date, {
+                    timeLeft,
+                    isRunning: false,
+                    savedAt: Date.now(),
+                  });
+                }}
+              />
+            ) : (
+              <FaPlay
+                className="cursor-pointer text-[#2ED843]"
+                onClick={() => {
+                  setIsRunning(true);
+                  saveTimer(selectedDay.date, {
+                    timeLeft,
+                    isRunning: true,
+                    savedAt: Date.now(),
+                  });
+                }}
+              />
+            )}
+
+          </div>
         )}
 
       </div>
     )}
 
+    {/* STATUS */}
+    <div className="mt-2 flex items-center justify-center gap-2">
+      <p className="text-white font-bold text-[15px]">Status : </p>
+
+      {selectedDay.completed ? (
+        <p className="text-green-400 flex items-center gap-1">
+          <FaCheck /> Completed
+        </p>
+      ) : (
+        <p className="text-amber-400">Not Completed</p>
+      )}
+    </div>
+
   </div>
 )}
-                {/* STATUS */}
-                <div className="mt-2 flex items-center justify-center gap-2">
-<p className="text-white font-bold text-[15px]">Status : </p>
-                  {selectedDay.completed ? (
-                    <p className="text-green-400 flex items-center gap-1">
-                      <FaCheck /> Completed
-                    </p>
-                  ) : (
-                    <p className="text-amber-400">
-                      Not Completed
-                    </p>
-                  )}
-                </div>
 
-              </div>
-            )}
+
 <div className="flex items-center justify-center w-full">
             <button
               onClick={() => setSelectedDay(null)}
