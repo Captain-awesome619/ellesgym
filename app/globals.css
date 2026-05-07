@@ -51,7 +51,8 @@ input[type="number"] {
   position: absolute;
   inset: -2px;
   border-radius: inherit;
-    pointer-events: none;
+  pointer-events: none;
+
   background: conic-gradient(
     from 0deg,
     transparent,
@@ -59,14 +60,16 @@ input[type="number"] {
     transparent,
     transparent
   );
+
   animation: rotateBorder 2s linear infinite;
+  filter: blur(4px);
   z-index: 0;
 }
 
 /* inner content layer */
 .today-card::after {
   content: "";
-    pointer-events: none; 
+  pointer-events: none;
   position: absolute;
   inset: 2px;
   background: linear-gradient(to bottom, #2a2a2a, #1a1a1a, black);
@@ -80,12 +83,6 @@ input[type="number"] {
   z-index: 2;
 }
 
-/* glow effect */
-.today-card::before {
-  filter: blur(4px);
-}
-
-/* rotation animation */
 @keyframes rotateBorder {
   0% {
     transform: rotate(0deg);

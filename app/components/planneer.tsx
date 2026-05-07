@@ -1,32 +1,100 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import WorkoutAssignModal from "./utils/workoutmodal";
-import Modal from "react-modal";
-import { FaPlus, FaCheck } from "react-icons/fa";
-import { IoBedOutline } from "react-icons/io5";
-import { GiMuscleUp } from "react-icons/gi";
-import { getBio } from "../lib/appwrite";
+
+import {
+  getBio,
+  getSession,
+  databases,
+  appwriteConfig,
+} from "../lib/appwrite";
+
 import {
   GiStrongMan,
   GiHeartBeats,
   GiWeightLiftingUp,
   GiMeditation,
   GiRunningShoe,
+  GiMuscleUp 
 } from "react-icons/gi";
-import { FaPause, FaPlay } from "react-icons/fa";
-import { useGlobalContext } from "../context/globalprovider";
-import { getSession } from "../lib/appwrite";
+import { IoIosBed } from "react-icons/io";
 import { ClipLoader } from "react-spinners";
 
-const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const EXERCISES: Record<
+  string,
+  {
+    routine: string;
+    exercises: string[];
+  }[]
+> = {
+  strength: [
+    {
+      routine: "Upper Body Strength",
+      exercises: ["Push-ups", "Bench Press", "Pull-ups", "Shoulder Press", "Chest Fly"],
+    },
+    {
+      routine: "Lower Body Strength",
+      exercises: ["Squats", "Deadlift", "Leg Press", "Lunges", "Calf Raises"],
+    },
+    {
+      routine: "Core Strength",
+      exercises: ["Plank", "Russian Twists", "Hanging Leg Raises", "Cable Crunches"],
+    },
+  ],
 
-const EXERCISES: Record<string, string[]> = {
-  strength: ["Bench Press", "Deadlift", "Squats"],
-  endurance: ["Running", "Cycling", "Jump Rope"],
-  "muscle-gain": ["Pull-ups", "Leg Press", "Chest Fly"],
-  "weight-loss": ["HIIT", "Burpees", "Mountain Climbers"],
-  flexibility: ["Yoga", "Stretching", "Pilates"],
-  "general-fitness": ["Push-ups", "Sit-ups", "Plank"],
+  endurance: [
+    {
+      routine: "Cardio Endurance",
+      exercises: ["Running", "Cycling", "Jump Rope", "Rowing", "Swimming"],
+    },
+    {
+      routine: "Stamina Training",
+      exercises: ["Burpees", "Battle Ropes", "Sprint Intervals", "Box Jumps"],
+    },
+  ],
+
+  "muscle-gain": [
+    {
+      routine: "Upper Body Hypertrophy",
+      exercises: ["Incline Bench Press", "Lat Pulldown", "Chest Fly", "Bicep Curls"],
+    },
+    {
+      routine: "Lower Body Hypertrophy",
+      exercises: ["Leg Press", "Romanian Deadlift", "Bulgarian Split Squats", "Hamstring Curl"],
+    },
+  ],
+
+  "weight-loss": [
+    {
+      routine: "Fat Burning Cardio",
+      exercises: ["HIIT", "Mountain Climbers", "Jump Rope", "Treadmill Sprints"],
+    },
+    {
+      routine: "Full Body Burn",
+      exercises: ["Burpees", "Kettlebell Swings", "Jump Squats", "Battle Ropes"],
+    },
+  ],
+
+  flexibility: [
+    {
+      routine: "Mobility Training",
+      exercises: ["Dynamic Stretching", "Hip Openers", "Shoulder Mobility", "Foam Rolling"],
+    },
+    {
+      routine: "Mind & Body Flexibility",
+      exercises: ["Yoga", "Pilates", "Static Stretching", "Breathing Exercises"],
+    },
+  ],
+
+  "general-fitness": [
+    {
+      routine: "Bodyweight Basics",
+      exercises: ["Push-ups", "Sit-ups", "Plank", "Air Squats"],
+    },
+    {
+      routine: "Functional Fitness",
+      exercises: ["Farmer Walks", "Step-ups", "Medicine Ball Slams", "Bear Crawls"],
+    },
+  ],
 };
 
 const GOAL_ICONS: Record<string, any> = {
@@ -38,499 +106,279 @@ const GOAL_ICONS: Record<string, any> = {
   "general-fitness": GiWeightLiftingUp,
 };
 
-type DayPlan = {
-  day: string;
-  date: string;
-  type: "workout" | "rest";
-  workout?: string;
-  goal?: string;
-  duration?: string;
-  completed?: boolean;
-};
-
-const getNextDays = (numDays = 28) => {
-  const today = new Date();
-  return Array.from({ length: numDays }).map((_, i) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    return {
-      date,
-      day: DAYS[date.getDay()],
-    };
-  });
-};
-
 const Planneer = ({ user }: { user: any }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [plan, setPlan] = useState<DayPlan[] | null>(null);
-  const [data, setdata] = useState<any>(null);
-  const [routine, setRoutine] = useState<any>(null);
-const [loading, setLoading] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<DayPlan | null>(null);
-const [timeLeft, setTimeLeft] = useState<number | null>(null);
-const [isRunning, setIsRunning] = useState(false);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [creatingPlan, setCreatingPlan] = useState(false);
+  const [workoutPlan, setWorkoutPlan] = useState<any[]>([]);
+  const [startDate, setStartDate] = useState<Date | null>(null);
 
-
+  // FETCH BIO
   useEffect(() => {
-    Modal.setAppElement("body");
-  }, []);
+    if (!user?.$id) return;
 
-  const findGoalByWorkout = (workoutName: string | undefined) => {
-    if (!workoutName) return undefined;
-    const found = Object.entries(EXERCISES).find(([, workouts]) =>
-      workouts.includes(workoutName)
-    );
-    return found?.[0];
-  };
-
-  const handleAssign = (selectedWorkouts: Record<string, string>) => {
-    const calendar = getNextDays(28);
-    const generated: DayPlan[] = calendar.map(({ date, day }) => {
-      const workout = selectedWorkouts[day];
-      if (!data?.schedule?.includes(day) || !workout) {
-        return {
-          day,
-          date: date.toDateString(),
-          type: "rest",
-        };
+    const fetchBio = async () => {
+      try {
+        const posts = await getBio(user.$id);
+        setData(posts);
+      } catch (err) {
+        console.log(err);
       }
+    };
 
-      return {
-        day,
-        date: date.toDateString(),
-        type: "workout",
-        workout,
-        goal: findGoalByWorkout(workout),
-        duration: data?.duration,
-        completed: false,
-      };
+    fetchBio();
+  }, [user?.$id]);
+
+  // GENERATE PLAN
+  useEffect(() => {
+    if (!data || !user?.$id || creatingPlan) return;
+
+    const generateWorkoutPlan = async () => {
+      setCreatingPlan(true);
+      setLoading(true);
+
+      try {
+        const existing = await getSession(user.$id);
+
+        // ✅ EXISTING PLAN
+        if ((existing?.documents?.length ?? 0) > 0) {
+          const saved = existing?.documents[0];
+
+          const parsed = saved?.session.map((item: string) =>
+            JSON.parse(item)
+          );
+
+          console.log("Existing plan found");
+          setWorkoutPlan(parsed);
+
+          // reconstruct start date (fallback: today)
+          setStartDate(saved?.startDate ? new Date(saved.startDate) : new Date());
+
+          return;
+        }
+
+        const goals: string[] = data.goal || [];
+        const validGoals = goals.filter((g) => EXERCISES[g]);
+
+        if (!validGoals.length) return;
+
+    const generated: any[] = [];
+let i = 0;
+let dayOffset = 0;
+
+// generate only scheduled workout days (not fixed 30)
+while (i < 30) {
+  const baseDate = new Date();
+  baseDate.setDate(baseDate.getDate() + dayOffset);
+
+  const workoutDay = isWorkoutDay(baseDate);
+
+  if (!workoutDay) {
+    generated.push({
+      type: "rest",
     });
 
-    setPlan(generated);
-    setIsOpen(false);
-  };
-
-  const chunkIntoWeeks = (arr: DayPlan[], size = 7) => {
-    const weeks = [];
-    for (let i = 0; i < arr.length; i += size) {
-      weeks.push(arr.slice(i, i + size));
-    }
-    return weeks;
-  };
-
-  const getMonthLabel = () => {
-    if (!plan?.length) return "";
-    return new Date(plan[0].date)
-      .toLocaleDateString("en-US", { month: "long", year: "numeric" })
-      .toUpperCase();
-  };
-
-const fetchBioData = async () => {
-  if (!user?.$id) return;
-
-  try {
-    const posts = await getBio(user.$id);
-    setdata(posts);
-  } catch (error) {
-    console.log("Fetching user bio failed:", error);
+    dayOffset++;
+    continue;
   }
-};
 
-  const filteredExercises = Object.fromEntries(
-    (data?.goal || [])
-      .map((g: string) => g?.toLowerCase())
-      .filter((goal: string) => EXERCISES[goal])
-      .map((goal: string) => [goal, EXERCISES[goal]])
-  );
+  const goal = validGoals[i % validGoals.length];
+  const routines = EXERCISES[goal];
+  const pick = routines[Math.floor(Math.random() * routines.length)];
 
-
- const fetchSessionData = async () => {
-  if (!user?.$id) return;
-
-  try {
-    const posts = await getSession(user.$id);
-    setRoutine(posts);
-
-    if (posts?.session?.length) {
-      const generatedPlan = buildPlanFromSession(posts.session);
-      setPlan(generatedPlan);
-    }
-  } catch (error) {
-    console.log("Fetching user session failed:", error);
-  }
-};
-
-useEffect(() => {
-  if (!user?.$id) return;
-
-  const fetchAll = async () => {
-    setLoading(true);
-    await Promise.all([fetchBioData(), fetchSessionData()]);
-    setLoading(false);
-  };
-
-  fetchAll();
-}, [user?.$id]);
-
-
-const buildPlanFromSession = (session: string[]): DayPlan[] | null => {
-  if (!session?.length) return null;
-
-  const parsed = session.map((item) => JSON.parse(item));
-
-  const sessionMap: Record<string, string> = {};
-
-  parsed.forEach(({ day, exercise }) => {
-    sessionMap[day] = exercise;
+  generated.push({
+    type: "workout",
+    goal,
+    routine: pick.routine,
+    exercises: pick.exercises,
   });
 
-  const calendar = getNextDays(28);
-
-  return calendar.map(({ date, day }) => {
-    const workout = sessionMap[day];
-
-    if (!workout) {
-      return {
-        day,
-        date: date.toDateString(),
-        type: "rest",
-      };
-    }
-
-    return {
-      day,
-      date: date.toDateString(),
-      type: "workout",
-      workout,
-      goal: findGoalByWorkout(workout),
-      duration: data?.duration,
-      completed: false,
-    };
-  });
-};
-
-
-
-
-const getStorageKey = (date: string) => `workout-timer-${date}`;
-
-const saveTimer = (date: string, payload: any) => {
-  localStorage.setItem(getStorageKey(date), JSON.stringify(payload));
-};
-
-const formatTime = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-};
-
-const Todayy = (dateString: string) => {
-  const today = new Date();
-  const d = new Date(dateString);
-  return (
-    today.getFullYear() === d.getFullYear() &&
-    today.getMonth() === d.getMonth() &&
-    today.getDate() === d.getDate()
-  );
-};
-useEffect(() => {
-  if (!selectedDay) return;
-
-  const saved = localStorage.getItem(getStorageKey(selectedDay.date));
-
-  if (!saved) {
-    setTimeLeft(null);
-    setIsRunning(false);
-    return;
-  }
-
-  const parsed = JSON.parse(saved);
-
-  if (parsed.isRunning) {
-    const elapsed = Math.floor((Date.now() - parsed.savedAt) / 1000);
-    const newTime = parsed.timeLeft - elapsed;
-
-    if (newTime > 0) {
-      setTimeLeft(newTime);
-      setIsRunning(true);
-    } else {
-      setTimeLeft(0);
-      setIsRunning(false);
-      localStorage.removeItem(getStorageKey(selectedDay.date));
-    }
-  } else {
-    setTimeLeft(parsed.timeLeft);
-    setIsRunning(false);
-  }
-}, [selectedDay]);
-
-
-useEffect(() => {
-  if (!isRunning || timeLeft === null) return;
-
-  if (timeLeft <= 0) {
-    setIsRunning(false);
-    if (selectedDay) {
-      localStorage.removeItem(getStorageKey(selectedDay.date));
-    }
-    return;
-  }
-
-  const interval = setInterval(() => {
-    setTimeLeft((prev) => (prev ? prev - 1 : 0));
-  }, 1000);
-
-  return () => clearInterval(interval);
-}, [isRunning, timeLeft, selectedDay]);
-
-
-const startWorkout = () => {
-  if (!data?.duration || !selectedDay) return;
-
-  const totalSeconds = data.duration * 60;
-
-  setTimeLeft(totalSeconds);
-  setIsRunning(true);
-
-  saveTimer(selectedDay.date, {
-    timeLeft: totalSeconds,
-    isRunning: true,
-    savedAt: Date.now(),
-  });
-};
-
-if (loading) {
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <ClipLoader color="#2ED843" size={50} />
-    </div>
-  );
+  i++;
+  dayOffset++;
 }
 
+        // shuffle
+        for (let i = generated.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [generated[i], generated[j]] = [generated[j], generated[i]];
+        }
 
-const isToday = (dateString: string) => {
+        const sessionData = generated.map((item) => JSON.stringify(item));
+
+        const now = new Date();
+        setStartDate(now);
+
+        await databases.createDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.workoutplanID,
+          user.$id,
+          {
+            users: user.$id,
+            session: sessionData,
+          
+          }
+        );
+
+        console.log("Workout plan created");
+        setWorkoutPlan(generated);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+        setCreatingPlan(false);
+      }
+    };
+
+    generateWorkoutPlan();
+  }, [data, user]);
+
+  // helpers
+const chunkIntoWeeks = (arr: any[]) => {
+  const weeks = [];
+  const days = arr.length;
+
+  for (let i = 0; i < days; i += 7) {
+    weeks.push(arr.slice(i, i + 7));
+  }
+
+  return weeks;
+};
+  const getDayDate = (index: number) => {
+    const base = startDate ? new Date(startDate) : new Date();
+    base.setDate(base.getDate() + index);
+    return base;
+  };
+
+const isToday = (date: Date) => {
   const today = new Date();
-  const cardDate = new Date(dateString);
 
   return (
-    today.getFullYear() === cardDate.getFullYear() &&
-    today.getMonth() === cardDate.getMonth() &&
-    today.getDate() === cardDate.getDate()
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
   );
 };
-  return (
-    <div className="p-4 sm:p-6 min-h-screen">
 
-      {!plan && !routine?.session?.length ? (
-        <div className="flex items-center justify-center h-[70vh]">
-          <div className="h-36 w-32 sm:h-40 sm:w-36 rounded-xl bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black flex items-center justify-center">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="border-2 border-dotted border-gray-500 p-4 w-[90%] h-[90%] rounded-lg flex flex-col items-center justify-end cursor-pointer"
-            >
-              <FaPlus className="text-white mb-2" />
-              <p className="text-white text-sm">Add Workout</p>
-            </button>
-          </div>
+const getScheduledDays = () => {
+  // supports: ["monday", "wednesday"] OR [1,3,5]
+  return (data?.schedule || []).map((d: string) => d.toLowerCase());
+};
+
+const isWorkoutDay = (date: Date) => {
+  const schedule = getScheduledDays();
+
+  const weekday = date
+    .toLocaleDateString("en-US", { weekday: "long" })
+    .toLowerCase();
+
+  return schedule.includes(weekday);
+};
+
+  return (
+    <div className="py-4 lg:p-6 min-h-screen">
+      {loading ? (
+        <div className="flex justify-center items-center h-[60vh]">
+          <ClipLoader color="#2ED843" size={40} />
         </div>
       ) : (
         <div>
-          <div className="mb-4 lg:text-[#2ED843] text-white text-2xl font-bold">
-            {getMonthLabel()}
-          </div>
+          {workoutPlan.length > 0 && (
+            <div className="mt-2">
+<div className="mb-5 text-white text-2xl font-bold ">
+  {startDate
+    ? startDate.toLocaleDateString("en-US", { month: "long" })
+    : new Date().toLocaleDateString("en-US", { month: "long" })}
 
-          {plan && chunkIntoWeeks(plan).map((week, weekIndex) => (
-            <div key={weekIndex} className="mb-6 grid">
+</div>
+              {chunkIntoWeeks(workoutPlan).map((week, weekIndex) => (
+                <div key={weekIndex} className="mb-6 grid items-start justify-start">
 
-              <div className="hidden lg:grid grid-cols-7 border-t border-b border-gray-800 py-4">
-                {week.map((item, i) => (
-                  <p key={i} className="text-white text-[25px] font-bold">
-                    {new Date(item.date).toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()}
-                  </p>
-                ))}
-              </div>
+                 <div className="hidden lg:grid grid-cols-7 border-t border-b border-gray-800 py-4 mb-1 ">
+  {week.map((_, i) => {
+    const globalIndex = weekIndex * 7 + i;
+    const date = getDayDate(globalIndex);
 
-              <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 mt-2 border-b lg:border-0 lg:pb-2 pb-4 ">
-                {week.map((item, i) => (
-                  <div key={i} className="grid">
-<p key={i} className="text-[#2ED843] text-[12px] font-bold  lg:hidden flex mb-1">
-                    {new Date(item.date).toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()}
-                  </p>
-                 <div
-  onClick={() => setSelectedDay(item)}
-  className={`relative grid gap-2 rounded-xl p-2 text-white min-h-28 cursor-pointer hover:scale-[1.02] transition
+    const weekdayShort = date
+      .toLocaleDateString("en-US", { weekday: "short" })
+      .toUpperCase();
+
+    return (
+      <p key={i} className="text-white font-bold">
+        {weekdayShort} 
+      </p>
+    );
+  })}
+</div>
+
+                  <div className="grid grid-cols-3 lg:grid-cols-7 lg:gap-4 gap-5 mt-2">
+
+                    {week.map((item, i) => {
+                      const globalIndex = weekIndex * 7 + i;
+                      const date = getDayDate(globalIndex);
+
+const Icon =
+  item.type === "rest"
+    ? IoIosBed
+    : GOAL_ICONS[item.goal] || GiMuscleUp;
+
+                      return (
+                        <div key={i} className="grid">
+<p className="text-[#2ED843] text-[15px] font-bold lg:hidden mb-1 mt-auto">
+  {date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()}{" "}
+
+</p>
+
+                <div
+  className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden cursor-pointer
     ${
-      isToday(item.date)
+      isToday(date)
         ? "today-card"
         : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black"
     }
   `}
 >
-                      <p className="text-[12px] mb-1">{item.date}</p>
 
-                      {item.type === "rest" ? (
-                        <div className="grid gap-1">
-                          <IoBedOutline className="text-[#2ED843]" />
-                          <p className="text-xs">Rest Day</p>
-                        </div>
-                      ) : (
-                        <div className="grid gap-1">
-                          {(() => {
-                            const Icon =
-                              GOAL_ICONS[item.goal as keyof typeof GOAL_ICONS] || GiMuscleUp;
-                            return <Icon className="text-[#2ED843]" />;
-                          })()}
+                            <p className="text-[12px] text-white">
+                              {date.toDateString()}
+                            </p>
 
+                            <Icon className="text-[#2ED843] my-2 text-[16px]" />
 
-                          <p className="text-xs font-semibold">{item.workout}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )
-      
-      
-      }
-
-
-
-      {/* 🔥 DETAIL MODAL */}
-      <Modal
-        isOpen={!!selectedDay}
-        onRequestClose={() => setSelectedDay(null)}
-        className="bg-[#0B0F14] text-white p-6 rounded-xl w-[90%] max-w-md mx-auto outline-none"
-        overlayClassName="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-      >
-        {selectedDay && (
-          <div className="flex flex-col gap-4">
-
-           
-
-            <p  className="text-xl font-bold text-center text-[#2ED843]">
-              {selectedDay.date}
-            </p>
-
-  {selectedDay.type === "rest" ? (
-  <div className="text-center">
-    <IoBedOutline className="text-[#2ED843] text-3xl mx-auto mb-2" />
-    <p>Rest Day</p>
+                         {item.type === "rest" ? (
+  <div className="flex flex-col items-start gap-2">
+   
+    <p className="text-xs font-semibold">Rest Day</p>
+  
   </div>
 ) : (
-  <div className="flex flex-col items-center gap-3">
-
-    {(() => {
-      const Icon =
-        GOAL_ICONS[selectedDay.goal as keyof typeof GOAL_ICONS] || GiMuscleUp;
-      return <Icon className="text-[#2ED843] text-3xl" />;
-    })()}
-
-    <p className="text-lg font-semibold">
-      {selectedDay.workout}
+  <>
+    <p className="text-xs font-semibold my-1">
+      {item.routine}
     </p>
 
-    <p className="text-sm text-white font-bold">
-      Goal: {selectedDay.goal}
-    </p>
-
-    <p className="text-sm">
-      Duration: {data?.duration} min
-    </p>
-
-    {/* 🔥 TIMER (ONLY WORKOUT DAYS) */}
-    {Todayy(selectedDay.date) && (
-      <div className="mt-3 flex items-center justify-center gap-3">
-
-        {timeLeft === null ? (
-          <button
-            onClick={startWorkout}
-            className="bg-[#2ED843] text-black px-4 py-2 rounded-lg font-semibold"
-          >
-            Start Workout
-          </button>
-        ) : (
-          <div className="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-[#2ED843]">
-
-            <span className="text-[#2ED843] font-bold">
-              {formatTime(timeLeft)}
-            </span>
-
-            {isRunning ? (
-              <FaPause
-                className="cursor-pointer text-[#2ED843]"
-                onClick={() => {
-                  setIsRunning(false);
-                  saveTimer(selectedDay.date, {
-                    timeLeft,
-                    isRunning: false,
-                    savedAt: Date.now(),
-                  });
-                }}
-              />
-            ) : (
-              <FaPlay
-                className="cursor-pointer text-[#2ED843]"
-                onClick={() => {
-                  setIsRunning(true);
-                  saveTimer(selectedDay.date, {
-                    timeLeft,
-                    isRunning: true,
-                    savedAt: Date.now(),
-                  });
-                }}
-              />
-            )}
-
-          </div>
-        )}
-
-      </div>
-    )}
-
-    {/* STATUS */}
-    <div className="mt-2 flex items-center justify-center gap-2">
-      <p className="text-white font-bold text-[15px]">Status : </p>
-
-      {selectedDay.completed ? (
-        <p className="text-green-400 flex items-center gap-1">
-          <FaCheck /> Completed
-        </p>
-      ) : (
-        <p className="text-amber-400">Not Completed</p>
-      )}
-    </div>
-
-  </div>
+   
+    <h4 className="mt-auto text-[13px] text-[#2ED843]">
+  {data?.duration} mins
+</h4>
+  </>
 )}
 
+                          </div>
+                          
+                        </div>
+                      );
+                    })}
 
-<div className="flex items-center justify-center w-full">
-            <button
-              onClick={() => setSelectedDay(null)}
-              className="mt-4 bg-white text-black py-2 rounded-xl w-[50%] cursor-pointer"
-            >
-              Close
-            </button>
-</div>
-          </div>
-        )}
-      </Modal>
+                  </div>
+                </div>
+              ))}
 
-      <WorkoutAssignModal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        onFinish={handleAssign}
-        onsucess={fetchSessionData}
-        days={data?.schedule}
-        goals={data?.goals}
-        duration={data?.duration}
-        exercises={filteredExercises}
-      />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
+
 export default Planneer;

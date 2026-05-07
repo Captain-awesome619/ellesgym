@@ -163,7 +163,7 @@ export async function getCurrentUser() {
  export const signInWithGoogle = () => {
   accountt.createOAuth2Session({
     provider: "google" as any,
-  success: "https://ellesgym.onrender.com/Oauth", // 👈 change this
+  success: "http://localhost:3000/Oauth", // 👈 change this
     failure: "https://ellesgym.onrender.com",
   });
 };
@@ -210,22 +210,19 @@ export async function getBio(userId: string) {
     throw new Error("Error getting user bio");
   }
 }
-
-export async function getSession(userId: string) {
-  if (!userId || typeof userId !== "string" || userId.trim() === "") {
-    return;
-  }
-
+export const getSession = async (userId: string) => {
   try {
-    const doc = await databases.getDocument(
+    const response = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.workoutplanID,
-      userId // ✅ direct lookup
+      [Query.equal("users", userId)]
     );
 
-    return doc;
+    return response;
+
   } catch (error) {
     console.log(error);
-    throw new Error("Error getting user session");
+
+    return null;
   }
-}
+};
