@@ -117,6 +117,17 @@ const Planneer = ({ user }: { user: any }) => {
 const [view, setView] = useState<"calendar" | "workout">("calendar");
 const [selectedDay, setSelectedDay] = useState<any>(null);
 const [completedDays, setCompletedDays] = useState<string[]>([]);
+
+
+const isPlanExpired = (start: Date) => {
+  const today = new Date();
+
+  const expiry = new Date(start);
+  expiry.setDate(expiry.getDate() + 30);
+
+  return today > expiry;
+};
+
   // FETCH BIO
   useEffect(() => {
     if (!user?.$id) return;
@@ -136,102 +147,128 @@ const [completedDays, setCompletedDays] = useState<string[]>([]);
   // GENERATE PLAN
   useEffect(() => {
     if (!data || !user?.$id || creatingPlan) return;
+const generateWorkoutPlan = async () => {
+  setCreatingPlan(true);
+  setLoading(true);
 
-    const generateWorkoutPlan = async () => {
-      setCreatingPlan(true);
-      setLoading(true);
+  try {
+    const existing = await getSession(user.$id);
 
-      try {
-        const existing = await getSession(user.$id);
+    // =========================================
+    // EXISTING PLAN
+    // =========================================
+    if ((existing?.documents?.length ?? 0) > 0) {
+      const saved = existing?.documents[0];
 
-        // ✅ EXISTING PLAN
-        if ((existing?.documents?.length ?? 0) > 0) {
-          const saved = existing?.documents[0];
+      const savedStartDate = saved?.startDate
+        ? new Date(saved.startDate)
+        : new Date();
 
-          const parsed = saved?.session.map((item: string) =>
-            JSON.parse(item)
-          );
+      // CHECK IF PLAN EXPIRED
+      const expired = isPlanExpired(savedStartDate);
 
-          console.log("Existing plan found");
-          setWorkoutPlan(parsed);
-  setCompletedDays(saved?.completed || []);
-          // reconstruct start date (fallback: today)
-          setStartDate(saved?.startDate ? new Date(saved.startDate) : new Date());
-
-          return;
-        }
-
-        const goals: string[] = data.goal || [];
-        const validGoals = goals.filter((g) => EXERCISES[g]);
-
-        if (!validGoals.length) return;
-
-    const generated: any[] = [];
-let i = 0;
-let dayOffset = 0;
-
-// generate only scheduled workout days (not fixed 30)
-while (i < 30) {
-  const baseDate = new Date();
-  baseDate.setDate(baseDate.getDate() + dayOffset);
-
-  const workoutDay = isWorkoutDay(baseDate);
-
-  if (!workoutDay) {
-    generated.push({
-      type: "rest",
-    });
-
-    dayOffset++;
-    continue;
-  }
-
-  const goal = validGoals[i % validGoals.length];
-  const routines = EXERCISES[goal];
-  const pick = routines[Math.floor(Math.random() * routines.length)];
-
-  generated.push({
-    type: "workout",
-    goal,
-    routine: pick.routine,
-    exercises: pick.exercises,
-  });
-
-  i++;
-  dayOffset++;
-}
-
-        // shuffle
-        for (let i = generated.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [generated[i], generated[j]] = [generated[j], generated[i]];
-        }
-
-        const sessionData = generated.map((item) => JSON.stringify(item));
-
-        const now = new Date();
-        setStartDate(now);
-
-        await databases.createDocument(
-          appwriteConfig.databaseId,
-          appwriteConfig.workoutplanID,
-          user.$id,
-          {
-            users: user.$id,
-            session: sessionData,
-          
-          }
+      // =========================================
+      // USE EXISTING PLAN
+      // =========================================
+      if (!expired) {
+        const parsed = saved?.session.map((item: string) =>
+          JSON.parse(item)
         );
 
-        console.log("Workout plan created");
-        setWorkoutPlan(generated);
-      } catch (error) {
-        console.error(error);
-      } finally {
+        setWorkoutPlan(parsed);
+        setCompletedDays(saved?.completed || []);
+        setStartDate(savedStartDate);
+
         setLoading(false);
         setCreatingPlan(false);
+
+        return;
       }
-    };
+
+      // =========================================
+      // DELETE OLD PLAN IF EXPIRED
+      // =========================================
+      if (saved) {
+        await databases.deleteDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.workoutplanID,
+          saved.$id
+        );
+      }
+    }
+
+    // =========================================
+    // CREATE NEW PLAN
+    // =========================================
+
+    const goals: string[] = data.goal || [];
+
+    const validGoals = goals.filter((g) => EXERCISES[g]);
+
+    if (!validGoals.length) return;
+
+    const now = new Date();
+
+    const generated: any[] = [];
+
+    // GENERATE EXACTLY 30 DAYS
+    for (let i = 0; i < 30; i++) {
+      const currentDate = new Date(now);
+
+      currentDate.setDate(now.getDate() + i);
+
+      const workoutDay = isWorkoutDay(currentDate);
+
+      // REST DAY
+      if (!workoutDay) {
+        generated.push({
+          type: "rest",
+        });
+
+        continue;
+      }
+
+      // WORKOUT DAY
+      const goal = validGoals[i % validGoals.length];
+
+      const routines = EXERCISES[goal];
+
+      const pick =
+        routines[Math.floor(Math.random() * routines.length)];
+
+      generated.push({
+        type: "workout",
+        goal,
+        routine: pick.routine,
+        exercises: pick.exercises,
+      });
+    }
+
+    const sessionData = generated.map((item) =>
+      JSON.stringify(item)
+    );
+
+    await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.workoutplanID,
+      user.$id,
+      {
+        users: user.$id,
+        session: sessionData,
+        startDate: now.toISOString(),
+        completed: [],
+      }
+    );
+
+    setWorkoutPlan(generated);
+    setStartDate(now);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+    setCreatingPlan(false);
+  }
+};
 
     generateWorkoutPlan();
   }, [data, user]);
@@ -279,14 +316,16 @@ const chunkIntoWeeks = (arr: any[]) => {
     return base;
   };
 
-const isToday = (date: Date) => {
+const isAccessibleDay = (date: Date) => {
   const today = new Date();
 
-  return (
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate()
-  );
+  today.setHours(0, 0, 0, 0);
+
+  const checkDate = new Date(date);
+
+  checkDate.setHours(0, 0, 0, 0);
+
+  return checkDate <= today;
 };
 
 const getScheduledDays = () => {
@@ -365,16 +404,16 @@ const Icon =
 
                 <div
   className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden
-  ${
-    isToday(date)  
-      ? "today-card cursor-pointer"
-      : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black cursor-not-allowed opacity-70"
-  }
+ ${
+  isAccessibleDay(date)
+    ? "today-card cursor-pointer"
+    : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black cursor-not-allowed opacity-70"
+}
 
  
 `}
  onClick={() => {
-  if (!isToday(date)) return;
+  if (!isAccessibleDay(date)) return;
 
   // ✅ already completed
   if (status === "completed" || status === "uncompleted") return;
