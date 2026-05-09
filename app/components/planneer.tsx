@@ -18,6 +18,8 @@ import {
 } from "react-icons/gi";
 import { IoIosBed } from "react-icons/io";
 import { ClipLoader } from "react-spinners";
+import Workout from './utils/workout'
+
 
 const EXERCISES: Record<
   string,
@@ -112,7 +114,9 @@ const Planneer = ({ user }: { user: any }) => {
   const [creatingPlan, setCreatingPlan] = useState(false);
   const [workoutPlan, setWorkoutPlan] = useState<any[]>([]);
   const [startDate, setStartDate] = useState<Date | null>(null);
-
+const [view, setView] = useState<"calendar" | "workout">("calendar");
+const [selectedDay, setSelectedDay] = useState<any>(null);
+const [completedDays, setCompletedDays] = useState<string[]>([]);
   // FETCH BIO
   useEffect(() => {
     if (!user?.$id) return;
@@ -150,7 +154,7 @@ const Planneer = ({ user }: { user: any }) => {
 
           console.log("Existing plan found");
           setWorkoutPlan(parsed);
-
+  setCompletedDays(saved?.completed || []);
           // reconstruct start date (fallback: today)
           setStartDate(saved?.startDate ? new Date(saved.startDate) : new Date());
 
@@ -232,7 +236,33 @@ while (i < 30) {
     generateWorkoutPlan();
   }, [data, user]);
 
+
+
   // helpers
+
+
+const getDayStatus = (date: Date) => {
+  const normalizedDate = new Date(date);
+  normalizedDate.setHours(0, 0, 0, 0);
+
+  const match = completedDays.find((entry) => {
+    const [savedDate] = entry.split(":");
+
+    const normalizedSavedDate = new Date(savedDate);
+    normalizedSavedDate.setHours(0, 0, 0, 0);
+
+    return (
+      normalizedSavedDate.toDateString() ===
+      normalizedDate.toDateString()
+    );
+  });
+
+  if (!match) return null;
+
+  return match.split(":")[1];
+};
+
+  
 const chunkIntoWeeks = (arr: any[]) => {
   const weeks = [];
   const days = arr.length;
@@ -273,9 +303,13 @@ const isWorkoutDay = (date: Date) => {
 
   return schedule.includes(weekday);
 };
-
+ const handleWorkoutSaved = (entry: string) => {
+  setCompletedDays((prev) => [...prev, entry]);
+};
   return (
     <div className="py-4 lg:p-6 min-h-screen">
+       {view === "calendar" && (
+      <>
       {loading ? (
         <div className="flex justify-center items-center h-[60vh]">
           <ClipLoader color="#2ED843" size={40} />
@@ -315,6 +349,7 @@ const isWorkoutDay = (date: Date) => {
                     {week.map((item, i) => {
                       const globalIndex = weekIndex * 7 + i;
                       const date = getDayDate(globalIndex);
+                      const status = getDayStatus(date);
 
 const Icon =
   item.type === "rest"
@@ -329,15 +364,25 @@ const Icon =
 </p>
 
                 <div
-  className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden cursor-pointer
-    ${
-      isToday(date)
-        ? "today-card"
-        : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black"
-    }
-  `}
->
+  className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden
+  ${
+    isToday(date)  
+      ? "today-card cursor-pointer"
+      : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black cursor-not-allowed opacity-70"
+  }
 
+ 
+`}
+ onClick={() => {
+  if (!isToday(date)) return;
+
+  // ✅ already completed
+  if (status === "completed" || status === "uncompleted") return;
+
+  setSelectedDay({ item, date });
+  setView("workout");
+}}
+>
                             <p className="text-[12px] text-white">
                               {date.toDateString()}
                             </p>
@@ -362,7 +407,18 @@ const Icon =
 </h4>
   </>
 )}
+{status === "completed" && (
 
+    <div className="flex flex-col items-center justify-center py-2 gap-2">
+    <div className=" w-full h-0.5 bg-[#2ED843] ">
+       </div>
+      <p className="text-green-500 text-xs font-bold">
+       Completed  ✓
+      </p>
+     
+    </div>
+ 
+)}
                           </div>
                           
                         </div>
@@ -377,6 +433,19 @@ const Icon =
           )}
         </div>
       )}
+      </>
+         )}
+         {view === "workout" && selectedDay && (
+  <Workout
+    data={selectedDay}
+    duration={data?.duration}
+      onWorkoutSaved={handleWorkoutSaved}
+    onBack={() => {
+      setView("calendar");
+      setSelectedDay(null);
+    }}
+  />
+)}
     </div>
   );
 };
