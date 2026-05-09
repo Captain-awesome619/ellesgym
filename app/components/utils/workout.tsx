@@ -31,7 +31,6 @@ import { appwriteConfig } from "@/app/lib/appwrite";
 Modal.setAppElement("body");
 
 const Workout = ({
-
   data,
   onBack,
   duration,
@@ -80,8 +79,6 @@ const { user } = useGlobalContext();
 
   const [loading, setLoading] =
     useState(false);
-
-  // total ACTIVE elapsed seconds
   const [elapsedSeconds, setElapsedSeconds] =
     useState(0);
 
@@ -149,7 +146,6 @@ useEffect(() => {
   setHydrated(true);
 }, [item, STORAGE_KEY, duration]);
 
- // SAVE WORKOUT
 useEffect(() => {
   if (!hydrated) return;
 
