@@ -30,6 +30,7 @@ import { appwriteConfig } from "@/app/lib/appwrite";
 
 Modal.setAppElement("body");
 
+
 const Workout = ({
   data,
   onBack,
