@@ -345,6 +345,16 @@ const isWorkoutDay = (date: Date) => {
  const handleWorkoutSaved = (entry: string) => {
   setCompletedDays((prev) => [...prev, entry]);
 };
+
+const isToday = (date: Date) => {
+  const today = new Date();
+
+  return (
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+};
   return (
     <div className="py-4 lg:p-6 min-h-screen">
        {view === "calendar" && (
@@ -403,14 +413,14 @@ const Icon =
 </p>
 
                 <div
-  className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden
- ${
+ className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden
+${
   isAccessibleDay(date)
-    ? "today-card cursor-pointer"
+    ? isToday(date)
+      ? "today-card cursor-pointer"
+      : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black cursor-not-allowed"
     : "bg-linear-to-b from-[#2a2a2a] via-[#1a1a1a] to-black cursor-not-allowed opacity-70"
 }
-
- 
 `}
  onClick={() => {
   if (!isAccessibleDay(date)) return;
