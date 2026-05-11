@@ -12,6 +12,8 @@ import {
   IoPlay,
   IoPause,
   IoRefresh,
+  IoCheckmarkCircle,
+IoShareSocialOutline,
 } from "react-icons/io5";
 
 import Modal from "react-modal";
@@ -19,14 +21,16 @@ import Modal from "react-modal";
 import { ClipLoader } from "react-spinners";
 import { useGlobalContext } from "@/app/context/globalprovider";
 import tip from "../../../public/fitnesstip.svg";
-
+import weight from '../../../public/weight.svg'
 import Image from "next/image";
-
+import clock from '../../../public/clock.svg'
 import { databases } from "@/app/lib/appwrite";
-
+import completee from '../../../public/complete.svg'
 import { IoIosWarning } from "react-icons/io";
-
+import { FaDumbbell } from "react-icons/fa";
 import { appwriteConfig } from "@/app/lib/appwrite";
+import badge from '../../../public/badge.svg'
+
 
 Modal.setAppElement("body");
 
@@ -35,8 +39,10 @@ const Workout = ({
   data,
   onBack,
   duration,
+  awards,
   onWorkoutSaved
 }: {
+  awards : any;
   data: any;
   onBack: () => void;
   duration: number;
@@ -82,6 +88,9 @@ const { user } = useGlobalContext();
     useState(false);
   const [elapsedSeconds, setElapsedSeconds] =
     useState(0);
+
+const [showSuccessView, setShowSuccessView] =
+  useState(false);
 
   // stores last completed set timestamp
   const lastCheckpointRef = useRef(0);
@@ -309,8 +318,8 @@ const updatedCompleted = [
     );
 onWorkoutSaved(newEntry);
     alert("Your daily workout has been saved.");
-    onBack()
-    resetWorkout();
+   
+  
   } catch (error) {
     console.log(error);
     alert("Something went wrong saving your workout.");
@@ -323,27 +332,336 @@ onWorkoutSaved(newEntry);
 
   // FINISH WORKOUT
   const handleFinishWorkout =
-    async () => {
-      // ALL COMPLETE
-      if (allSetsCompleted) {
-        await saveWorkoutStatus(
-          "completed"
-        );
-
-        return;
-      }
-
-      // NOT COMPLETE
-      setShowIncompleteModal(
-        true
+  async () => {
+    // ALL COMPLETE
+    if (allSetsCompleted) {
+      await saveWorkoutStatus(
+        "completed"
       );
-    };
 
+      // close modal
+      setShowCompleteModal(false);
+
+      // show success screen
+      setShowSuccessView(true);
+
+      return;
+    }
+
+    // NOT COMPLETE
+    setShowIncompleteModal(
+      true
+    );
+  };
   // SKIP WORKOUT
   const handleSkipWorkout =
     () => {
       setShowSkipModal(true);
     };
+
+
+
+// COMPLETED WORKOUTS ONLY
+const completedWorkouts =
+  awards?.filter((entry: string) =>
+    entry.includes(":completed")
+  ) || [];
+
+// TOTAL COMPLETED
+const completedCount =
+  completedWorkouts.length;
+
+// BADGE MILESTONES
+const milestones = [1, 5, 10, 15, 20];
+
+// CURRENT BADGE
+const currentBadge =
+  milestones
+    .filter(
+      (m) => completedCount >= m
+    )
+    .pop();
+
+// NEXT BADGE
+const nextBadge =
+  milestones.find(
+    (m) => completedCount < m
+  );
+
+// DID USER JUST UNLOCK BADGE?
+const showNewBadge =
+  milestones.includes(
+    completedCount
+  );
+
+// WORKOUTS LEFT
+const workoutsLeft =
+  nextBadge
+    ? nextBadge - completedCount
+    : 0;
+
+
+const progress =
+  nextBadge
+    ? (completedCount /
+        nextBadge) *
+      100
+    : 100;
+
+
+if (showSuccessView) {
+  return (
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center px-6 py-10">
+      {/* BACKGROUND */}
+       
+
+      {/* CONTENT */}
+      <div className="relative z-20 w-full max-w-4xl flex flex-col items-center text-center lg:gap-12 gap-8">
+        {/* ICON */}
+        <div className="flex items-center justify-center">
+         <Image 
+          src={completee}
+        
+         alt="done"
+         className="lg:w-20 w-15"
+         />
+        </div>
+
+        {/* TEXT */}
+        <div className="space-y-2">
+          <h1 className="text-4xl lg:text-6xl font-bold text-white">
+            Workout Completed
+          </h1>
+
+          <p className="text-white/70 text-lg">
+            Great job - you're one step closer
+            to your goal.
+          </p>
+        </div>
+
+        {/* STATS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full max-w-2xl">
+          {/* DURATION */}
+          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl py-4  flex flex-col items-center justify-center gap-2">
+         <div className="flex gap-4 items-center justify-center">
+           <div className="flex items-center justify-center">
+         <Image 
+          src={clock}
+         
+         alt="done"
+         className="lg:w-8 w-5"
+         />
+        </div>
+
+            <h3 className=" text-xl lg:text-2xl font-bold text-white">
+            {duration}
+              min
+            </h3>
+</div>
+            <p className="text-white/70">
+              Duration
+            </p>
+          </div>
+
+
+
+   {/* EXERCISES */}
+          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-2">
+
+         
+
+            <h3 className="text-xl lg:text-2xl font-bold text-white">
+            685 Kcal
+            </h3>
+ 
+            <p className="text-white/70">
+           Calories Burned
+            </p>
+           
+          </div>
+
+          {/* EXERCISES */}
+          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2">
+<div  className="flex gap-4 items-center justify-center" >
+           <Image 
+          src={weight}
+         alt="done"
+         className="lg:w-5 w-4"
+         />
+
+            <h3 className="text-xl lg:text-2xl font-bold text-white">
+              {
+                item.exercises
+                  ?.length
+              }
+            </h3>
+ </div>
+            <p className="text-white/70">
+              Exercises Completed
+            </p>
+           
+          </div>
+        </div>
+
+     {/* BADGE + PROGRESS */}
+<div
+  className={`grid gap-5 w-full max-w-4xl ${
+    showNewBadge
+      ? "lg:grid-cols-2"
+      : "grid-cols-1"
+  }`}
+>
+  
+  {/* NEW BADGE */}
+ 
+<div className="lg:hidden flex">
+ {showNewBadge && (
+    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+      
+      {/* PLACEHOLDER BADGE */}
+     <Image 
+          src={badge}
+         alt="done"
+         className="lg:w-20 w-15"
+         />
+
+      <h3 className="text-3xl font-bold text-white text-center">
+        New Badge Unlocked
+      </h3>
+
+      <p className="text-white/70 text-center">
+        {completedCount} Workout
+        {completedCount > 1 && "s"} Completed
+      </p>
+
+      <div className="bg-[#2ED843]/20 px-4 py-2 rounded-full">
+        <p className="text-[#2ED843] font-semibold">
+          {currentBadge} Day Badge
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+
+
+
+
+  {/* PROGRESS CARD */}
+  <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-3xl p-8 w-full flex flex-col gap-5 justify-center">
+    {/* PROGRESS BAR */}
+    <div className="w-full h-2 bg-white rounded-full overflow-hidden">
+      <div
+        className="h-full bg-[#2ED843] rounded-full transition-all duration-500"
+        style={{
+          width: `${progress}%`,
+        }}
+      />
+    </div>
+
+   
+    <div className="flex justify-between text-sm text-white/90">
+
+     {nextBadge ? (
+       <div className="">
+<div className="flex items-center gap-1  text-sm text-white/90">
+  <p>Next Badge :</p>
+  <p>{workoutsLeft}</p>
+
+  {workoutsLeft <= 1 ? (
+    <p>workout</p>
+  ) : (
+    <p>workouts</p>
+  )}
+
+  <p>left</p>
+</div>
+     
+    </div>
+      ) : (
+        <p className="text-white/70">
+          All badges unlocked 🎉
+        </p>
+      )}
+
+    </div>
+  </div>
+
+<div className="lg:flex hidden">
+ {showNewBadge && (
+    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+      
+      {/* PLACEHOLDER BADGE */}
+     <Image 
+          src={badge}
+         alt="done"
+         className="lg:w-20 w-15"
+         />
+
+      <h3 className="text-3xl font-bold text-white text-center">
+        New Badge Unlocked
+      </h3>
+
+      <p className="text-white/70 text-center">
+        {completedCount} Workout
+        {completedCount > 1 && "s"} Completed
+      </p>
+
+      <div className="bg-[#2ED843]/20 px-4 py-2 rounded-full">
+        <p className="text-[#2ED843] font-semibold">
+          {currentBadge} Day Badge
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+
+</div>
+
+        {/* BUTTONS */}
+        <div className="flex flex-col lg:flex-row gap-4 w-full max-w-3xl">
+          <button
+             onClick={() => {
+              resetWorkout();
+
+              setShowSuccessView(
+                false
+              );
+
+              onBack();
+            }}
+            className="flex-1 border border-white text-white py-4 rounded-2xl font-bold text-lg cursor-pointer"
+          >
+            View Weekly Progress
+          </button>
+
+          <button
+            onClick={() => {
+              resetWorkout();
+
+              setShowSuccessView(
+                false
+              );
+
+              onBack();
+            }}
+            className="flex-1 bg-[#2ED843] text-black py-4 rounded-2xl font-bold text-lg cursor-pointer"
+          >
+            Back to Dashboard
+          </button>
+
+          <button className="flex items-center justify-center gap-2 border border-white text-white py-4 px-8 rounded-2xl font-bold text-lg cursor-pointer">
+            <IoShareSocialOutline
+              size={22}
+            />
+
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
   if (item.type === "rest") {
     return (
@@ -605,7 +923,7 @@ onWorkoutSaved(newEntry);
               ) => (
                 <div
                   key={idx}
-                  className="bg-transparent border border-white/10 rounded-xl p-4"
+                  className="bg-white/10 backdrop-blur-none border border-white/10  rounded-xl p-4"
                 >
                   {/* EXERCISE NAME */}
                   <h4 className="font-bold text-lg mb-4">
@@ -711,7 +1029,7 @@ onWorkoutSaved(newEntry);
             </button>
           </div>
 
-          <div className="bg-linear-to-b from-[#4a4a4a] to-[#1f1f1f] w-80 h-full flex flex-col gap-3 p-6 rounded-xl">
+          <div className="bg-white/10 backdrop-blur-none border border-white/10 w-80 h-full flex flex-col gap-3 p-6 rounded-xl">
             <div className="grid gap-2">
               <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">
                 Bench Press

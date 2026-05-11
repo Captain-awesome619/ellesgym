@@ -489,6 +489,7 @@ ${
     data={selectedDay}
     duration={data?.duration}
       onWorkoutSaved={handleWorkoutSaved}
+      awards={completedDays}
     onBack={() => {
       setView("calendar");
       setSelectedDay(null);
