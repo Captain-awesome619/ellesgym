@@ -149,7 +149,7 @@ const dayIndex = data?.startDate
       Today's Workout
     </h4>
     <div className="lg:px-4 py-[0.5] px-3 bg-black flex items-center justify-center rounded-xl">
-  <h5 className="lg:text-[18px] text-[15px] font-normal text-[#2ED843] ">
+  <h5 className="lg:text-[15px] text-[13px] font-normal text-[#2ED843] ">
  DAY {todayWorkout?.day}
 </h5>
 </div>
