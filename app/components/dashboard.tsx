@@ -153,7 +153,6 @@ const dayIndex = data?.startDate
  DAY {todayWorkout?.day}
 </h5>
 </div>
-
   </div>
 <div className="flex flex-col lg:gap-4 gap-4 relative z-10"> 
 <div className="flex items-center  gap-4"> 
