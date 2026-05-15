@@ -132,7 +132,40 @@ const dayIndex = data?.startDate
         </h4>
       </div>
 
-<div
+
+
+{todayWorkout?.type === "rest" ? (
+  <div
+    className="relative lg:w-180 lg:h-80 rounded-lg w-full h-60 bg-cover bg-center overflow-hidden flex flex-col justify-center items-center text-center p-6"
+    style={{
+      backgroundImage: `url(/rest.jpg)`,
+    }}
+  >
+    {/* DARK OVERLAY */}
+    <div className="absolute inset-0 bg-black/70" />
+
+    {/* CONTENT */}
+    <div className="relative z-10 flex flex-col items-center gap-4">
+      <h2 className="text-[#2ED843] font-bold lg:text-[28px] text-[22px]">
+        Rest Day 💤
+      </h2>
+
+      <p className="text-gray-200 lg:text-[15px] text-[13px] max-w-md">
+        Your body is recovering and rebuilding strength. Rest is part of the process don't skip it.
+      </p>
+
+      <button
+        onClick={start}
+        className="mt-3 px-6 py-2 rounded-lg bg-[#2ED843] text-black font-bold hover:opacity-90 transition"
+      >
+        View Plan
+      </button>
+    </div>
+  </div>
+) : (
+  /* your existing workout div stays here */
+
+  <div
   className="relative lg:w-180 lg:h-80 rounded-lg w-full h-60 bg-cover bg-center overflow-hidden flex flex-col gap-5 lg:px-8 lg:py-3 p-4"
   style={{
     backgroundImage: `url(/${
@@ -189,8 +222,14 @@ Print Workout Card
 </button>
 </div>
   </div>
-
 </div>
+)}
+
+
+
+
+
+
 
 
     </div>
