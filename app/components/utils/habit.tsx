@@ -58,14 +58,13 @@ const HabitChecklist = ({ data }: any) => {
 
   // =========================================
   // 🔥 COMPLETED TODAY FROM APPWRITE (FIX)
-  // =========================================
-  const today = new Date().toISOString().split("T")[0];
+const today = new Date().toLocaleDateString("en-CA");
 
-  const completedToday =
-    data2?.habits?.some((item: string) =>
-      item.startsWith(today)
-    ) ?? false;
-
+const completedToday =
+  data2?.documents?.[0]?.habits?.some((item: string) => {
+    const [savedDate] = item.split(":");
+    return savedDate.trim() === today;
+  }) || false;
   // =========================================
   // TOGGLE HABIT
   // =========================================
@@ -134,7 +133,7 @@ const HabitChecklist = ({ data }: any) => {
         return alert("Complete all habits first");
       }
 
-      const entry = `${today}: completed`;
+    const entry = `${today}: completed`;
 
       try {
         const existing = await databases.getDocument(
@@ -173,16 +172,17 @@ const HabitChecklist = ({ data }: any) => {
       const updatedEntry = `${today}: completed`;
 
 setData2((prev: any) => {
-  if (!prev?.habits) {
-    return {
-      ...prev,
-      habits: [updatedEntry],
-    };
-  }
+  const existingHabits =
+    prev?.documents?.[0]?.habits || [];
 
   return {
     ...prev,
-    habits: [...prev.habits, updatedEntry],
+    documents: [
+      {
+        ...prev.documents[0],
+        habits: [...existingHabits, updatedEntry],
+      },
+    ],
   };
 });
     } catch (err) {
@@ -198,6 +198,8 @@ setData2((prev: any) => {
   // =========================================
   return (
     <div className=" bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
+      
+   
       <h2 className="text-white font-bold text-[22px] mb-6">
         Habit Checklist
       </h2>
