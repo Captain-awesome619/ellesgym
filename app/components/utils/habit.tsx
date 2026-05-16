@@ -202,7 +202,7 @@ setData2((prev: any) => {
         Habit Checklist
       </h2>
 
-      <div className={`flex flex-col ${completedToday ? "" : "flex-1"}`}>
+      <div className={`flex flex-col gap-4`}>
         {habits.map((habit) => (
           <div
             key={habit.id}
@@ -216,7 +216,7 @@ setData2((prev: any) => {
                 onChange={() => toggleHabit(habit.id)}
                 className={`w-4 h-4 accent-[#2ED843] ${
                   completedToday
-                    ? "cursor-not-allowed opacity-40"
+                    ? "cursor-not-allowed "
                     : "cursor-pointer"
                 }`}
               />
