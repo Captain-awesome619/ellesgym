@@ -3,8 +3,7 @@ import { FiPlus } from "react-icons/fi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useGlobalContext } from "@/app/context/globalprovider";
-import { databases, appwriteConfig } from "@/app/lib/appwrite";
-import { gethabits } from "@/app/lib/appwrite";
+import { databases, appwriteConfig, gethabits } from "@/app/lib/appwrite";
 
 const HabitChecklist = ({ data }: any) => {
   const { user } = useGlobalContext();
@@ -29,7 +28,7 @@ const HabitChecklist = ({ data }: any) => {
     const fetchHabits = async () => {
       try {
         const posts = await gethabits(user.$id);
-        setData2(posts);
+        setData2(posts); // FIX: keep as document (NOT {documents})
       } catch (err) {
         console.log(err);
       }
@@ -39,16 +38,13 @@ const HabitChecklist = ({ data }: any) => {
   }, [user?.$id]);
 
   // =========================================
-  // LOCAL STORAGE (ONLY FOR UI HABITS)
+  // LOCAL STORAGE
   // =========================================
   const habitsKey = `habits_${user?.$id || "guest"}`;
 
   useEffect(() => {
     const savedHabits = localStorage.getItem(habitsKey);
-
-    if (savedHabits) {
-      setHabits(JSON.parse(savedHabits));
-    }
+    if (savedHabits) setHabits(JSON.parse(savedHabits));
   }, [habitsKey]);
 
   const saveHabits = (updated: any[]) => {
@@ -57,16 +53,18 @@ const HabitChecklist = ({ data }: any) => {
   };
 
   // =========================================
-  // 🔥 COMPLETED TODAY FROM APPWRITE (FIX)
-const today = new Date().toLocaleDateString("en-CA");
+  // FIXED: COMPLETED TODAY LOGIC
+  // =========================================
+  const today = new Date().toLocaleDateString("en-CA");
 
-const habitsFromDB =
-  data2?.documents?.[0]?.habits ?? [];
+  // FIX: correct Appwrite structure (NO .documents)
+  const habitsFromDB = data2?.habits ?? [];
 
-const completedToday = habitsFromDB.some((item: string) => {
-  const [savedDate] = item.split(":");
-  return savedDate.trim() === today;
-});
+  const completedToday = habitsFromDB.some((item: string) => {
+    const [savedDate] = item.split(":");
+    return savedDate?.trim() === today;
+  });
+
   // =========================================
   // TOGGLE HABIT
   // =========================================
@@ -123,92 +121,76 @@ const completedToday = habitsFromDB.some((item: string) => {
   };
 
   // =========================================
-  // DONE BUTTON (APPWRITE ONLY)
+  // DONE BUTTON
   // =========================================
- const submitHabits = async () => {
-  try {
-    setLoading(true);
+  const submitHabits = async () => {
+    try {
+      setLoading(true);
 
-    const allCompleted = habits.every((h) => h.checked);
-    if (!allCompleted) {
-      return alert("Complete all habits first");
-    }
+      const allCompleted = habits.every((h) => h.checked);
+      if (!allCompleted) return alert("Complete all habits first");
 
-    const entry = `${today}: completed`;
+      const entry = `${today}: completed`;
 
-    const existing = await databases.getDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.habitID,
-      user.$id
-    );
+      const existing = await databases.getDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.habitID,
+        user.$id
+      );
 
-    const existingHabits = existing?.habits || [];
+      const existingHabits = existing?.habits || [];
 
-    // 🚨 prevent duplicate entries for same day
-    const alreadyDone = existingHabits.some((item: string) => {
-      const [savedDate] = item.split(":");
-      return savedDate.trim() === today;
-    });
+      const alreadyDone = existingHabits.some((item: string) => {
+        const [savedDate] = item.split(":");
+        return savedDate?.trim() === today;
+      });
 
-    if (alreadyDone) {
-      alert("You already completed today’s habits");
-      return;
-    }
-
-    const updatedHabits = [...existingHabits, entry];
-
-    await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.habitID,
-      user.$id,
-      {
-        habits: updatedHabits,
-        users: user.$id,
+      if (alreadyDone) {
+        alert("You already completed today’s habits");
+        return;
       }
-    );
 
-    // reset UI
-    const reset = habits.map((h) => ({ ...h, checked: false }));
-    saveHabits(reset);
+      const updatedHabits = [...existingHabits, entry];
 
-    // update local state safely
-    setData2((prev: any) => {
-      const doc = prev?.documents?.[0];
+      await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.habitID,
+        user.$id,
+        {
+          habits: updatedHabits,
+          users: user.$id,
+        }
+      );
 
-      if (!doc) return prev;
+      // reset UI
+      saveHabits(habits.map((h) => ({ ...h, checked: false })));
 
-      return {
+      // FIX: update local state safely (NO documents array)
+      setData2((prev: any) => ({
         ...prev,
-        documents: [
-          {
-            ...doc,
-            habits: updatedHabits,
-          },
-        ],
-      };
-    });
+        habits: updatedHabits,
+      }));
 
-    alert("Done for today 🎉 Check back tomorrow!");
-  } catch (err) {
-    console.log(err);
-    alert("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
+      alert("Done for today 🎉 Check back tomorrow!");
+    } catch (err) {
+      console.log(err);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // =========================================
   // UI (UNCHANGED)
   // =========================================
   return (
     <div className=" bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
-      
-   
+
       <h2 className="text-white font-bold text-[22px] mb-6">
         Habit Checklist
       </h2>
 
-      <div className={`flex flex-col gap-4`}>
+      <div className="flex flex-col gap-4">
         {habits.map((habit) => (
           <div
             key={habit.id}
@@ -221,9 +203,7 @@ const completedToday = habitsFromDB.some((item: string) => {
                 disabled={completedToday}
                 onChange={() => toggleHabit(habit.id)}
                 className={`w-4 h-4 accent-[#2ED843] ${
-                  completedToday
-                    ? "cursor-not-allowed "
-                    : "cursor-pointer"
+                  completedToday ? "cursor-not-allowed" : "cursor-pointer"
                 }`}
               />
 
@@ -245,7 +225,7 @@ const completedToday = habitsFromDB.some((item: string) => {
                   setShowMenu(showMenu === habit.id ? null : habit.id)
                 }
               >
-                <HiOutlineDotsVertical size={18} className="cursor-pointer" />
+                <HiOutlineDotsVertical size={18} />
               </button>
 
               {showMenu === habit.id && (
@@ -279,7 +259,7 @@ const completedToday = habitsFromDB.some((item: string) => {
           />
           <button
             onClick={addHabit}
-            className="flex items-center justify-center gap-2 border border-[#2ED843] text-[#2ED843] py-3 rounded-lg font-semibold hover:bg-[#2ED843]/10 transition cursor-pointer"
+            className="flex items-center justify-center gap-2 border border-[#2ED843] text-[#2ED843] py-3 rounded-lg font-semibold"
           >
             <FiPlus /> Add Habit
           </button>
@@ -287,7 +267,7 @@ const completedToday = habitsFromDB.some((item: string) => {
       )}
 
       {completedToday ? (
-        <div className="mt-5 text-center text-[#2ED843] border border-white/10 p-4 rounded-lg font-normal">
+        <div className="mt-5 text-center text-[#2ED843] border border-white/10 p-4 rounded-lg">
           🎉 You're done for today <br />
           Come back tomorrow to continue your streak
         </div>
@@ -297,15 +277,11 @@ const completedToday = habitsFromDB.some((item: string) => {
           disabled={loading}
           className="mt-6 bg-[#2ED843] text-black font-bold py-3 rounded-lg"
         >
-          {loading ? (
-            <ClipLoader color="black" size={20} />
-          ) : (
-            "Done"
-          )}
+          {loading ? <ClipLoader color="black" size={20} /> : "Done"}
         </button>
       )}
     </div>
   );
 };
 
-export default HabitChecklist;  
+export default HabitChecklist;
