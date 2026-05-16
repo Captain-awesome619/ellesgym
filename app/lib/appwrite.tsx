@@ -17,6 +17,7 @@ import { Account,
          storageId:process.env.NEXT_PUBLIC_APPWRITE_STORAGE_ID as string,
          bioID:process.env.NEXT_PUBLIC_APPWRITE_BIO_COLLECTION_ID as string,
          workoutplanID:process.env.NEXT_PUBLIC_APPWRITE_WORKOUT_COLLECTION_ID as string,
+          habitID:process.env.NEXT_PUBLIC_APPWRITE_HABIT_COLLECTION_ID as string,
       };
       const client = new Client();
 client
@@ -163,7 +164,7 @@ export async function getCurrentUser() {
  export const signInWithGoogle = () => {
   accountt.createOAuth2Session({
     provider: "google" as any,
-  success: "http://localhost:3000/Oauth", // 👈 change this
+  success: "https://ellesgym.onrender.com/Oauth", // 👈 change this
     failure: "https://ellesgym.onrender.com",
   });
 };
@@ -224,5 +225,23 @@ export const getSession = async (userId: string) => {
     console.log(error);
 
     return null;
+  }
+};
+
+export const gethabits = async (userId: string) => {
+  if (!userId || typeof userId !== "string" || userId.trim() === "") {
+    return;
+  }
+
+  try {
+    const doc = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.habitID,
+      userId // ✅ direct lookup
+    );
+    return doc;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting user habits");
   }
 };

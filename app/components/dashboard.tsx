@@ -7,12 +7,33 @@ import smallircle from '../../public/smallcircle.svg'
 import Image from "next/image";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FaShuffle } from "react-icons/fa6";
-
+import HabitChecklist from "./utils/habit";
+import { gethabits } from "../lib/appwrite";
+import Chart from "./utils/chart";
 const Dashboard = ({ user, start }: { user: any; start: () => void }) => {
   const name = user?.fullname?.trim().split(" ")[0];
   const name2 = user?.name?.trim().split(" ")[0];
 const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
+ const [data2, setData2] = useState<any>(null);
+
+
+
+ useEffect(() => {
+    if (!user?.$id) return;
+
+    const fetchHabits = async () => {
+      try {
+        const posts = await gethabits(user.$id);
+        setData2(posts);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchHabits();
+
+  }, [user?.$id]);
 
 useEffect(() => {
   if (!user?.$id) return;
@@ -40,6 +61,8 @@ useEffect(() => {
 
   fetchBio();
 }, [user?.$id]);
+
+
 
   // check if session exists and has values
 const hasSession =
@@ -73,10 +96,72 @@ const dayIndex = data?.startDate
  "muscle-gain": "musclegain2.jpg",
   "flexibility": 'fleixble3.jpg'
 };
+
+
+const extractDates = (arr: string[] = []) => {
+  return arr
+    .map((item) => item.split(":")[0])
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+};
+
+const isNextDay = (prev: string, next: string) => {
+  const d1 = new Date(prev);
+  const d2 = new Date(next);
+
+  const diff = (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24);
+  return diff === 1;
+};
+
+const today = new Date().toISOString().split("T")[0];
+
+const currentStreak = (() => {
+  const dates = extractDates(data2?.habits || []);
+
+  if (dates.length === 0) return 0;
+
+  // 🔥 must include today or streak is invalid
+  if (!dates.includes(today)) return 0;
+
+  let streak = 1;
+
+  for (let i = dates.length - 1; i > 0; i--) {
+    if (isNextDay(dates[i - 1], dates[i])) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+})();
+
+
+const longestStreak = (() => {
+  const dates = extractDates(data2?.habits || []);
+
+  if (dates.length === 0) return 0;
+
+  let maxStreak = 1;
+  let current = 1;
+
+  for (let i = 1; i < dates.length; i++) {
+    if (isNextDay(dates[i - 1], dates[i])) {
+      current++;
+      maxStreak = Math.max(maxStreak, current);
+    } else {
+      current = 1;
+    }
+  }
+
+  return maxStreak;
+})();
   
+
+
+
   return (
     <div className="grid gap-6">
-     
+    
       <div className="flex flex-col gap-1">
         <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
           Welcome, {name || name2}
@@ -94,12 +179,12 @@ const dayIndex = data?.startDate
     <ClipLoader color="#2ED843" size={60} />
   </div>
 ) : hasSession ? (
-  <div className="flex flex-col gap-5 w-full lg:items-center">
-    <div className="flex lg:flex-row flex-col lg:gap-8 gap-6">
+  <div className="flex flex-col gap-5 w-full lg:items-center ">
+    <div className="flex lg:flex-row flex-col lg:gap-8 gap-6 w-full  ">
       <div className="flex flex-col p-5 bg-white/10 backdrop-blur-none lg:w-70 gap-10 rounded-lg">
         <div className="flex justify-between items-center w-full">
           <h4 className="font-semibold lg:text-[18px] text-[15px] text-white">
-            Dailty Streak
+            Daily Streak
           </h4>
 
           <Image
@@ -110,14 +195,15 @@ const dayIndex = data?.startDate
         </div>
 
         <div className="flex items-center">
-          <div className="flex flex-col gap-4 items-center">
-            <h4 className="font-semibold lg:text-[15px] text-[15px] text-white">
-              7 Days
+          <div className="flex flex-col gap-4 ">
+            <h4 className="font-bold lg:text-[15px] text-[15px] text-[#2ED843]">
+           {currentStreak} {currentStreak === 1 ? "Day" : "Days"}
             </h4>
-
-            <h4 className="font-semibold lg:text-[15px] text-[13px] text-white">
-              Keep it up
-            </h4>
+<h4 className="font-semibold lg:text-[15px] text-[13px] text-white">
+  {currentStreak === 0
+    ? "No streak yet — le's change that today 🚀"
+    : "Keep it up 💪 You're doing great"}
+</h4>
           </div>
 
           <Image
@@ -127,8 +213,8 @@ const dayIndex = data?.startDate
           />
         </div>
 
-        <h4 className="font-semibold lg:text-[13px] text-[12px] text-white mt-auto">
-          Your longest streak: 12 Days
+        <h4 className="font-bold lg:text-[13px] text-[12px] text-[#2ED843] mt-auto">
+          Your longest streak: {longestStreak} {longestStreak === 1 ? "Day" : "Days"}
         </h4>
       </div>
 
@@ -156,14 +242,14 @@ const dayIndex = data?.startDate
 
       <button
         onClick={start}
-        className="mt-3 px-6 py-2 rounded-lg bg-[#2ED843] text-black font-bold hover:opacity-90 transition"
+        className="mt-3 px-6 py-2 rounded-lg bg-[#2ED843] text-black font-bold hover:opacity-90 transition cursor-pointer"
       >
         View Plan
       </button>
     </div>
   </div>
 ) : (
-  /* your existing workout div stays here */
+  
 
   <div
   className="relative lg:w-180 lg:h-80 rounded-lg w-full h-60 bg-cover bg-center overflow-hidden flex flex-col gap-5 lg:px-8 lg:py-3 p-4"
@@ -233,6 +319,14 @@ Print Workout Card
 
 
     </div>
+
+<div  className="flex lg:flex-row flex-col lg:gap-8 gap-6 w-full "> 
+<HabitChecklist />
+<div className="lg:w-[70%]">
+<Chart />
+</div>
+  </div>
+
   </div>
 ) : (
   <div className="flex flex-col items-center justify-center bg-transparent border border-[#2ED843]/30 rounded-3xl py-14 px-6 text-center shadow-lg shadow-[#2ED843]/10">

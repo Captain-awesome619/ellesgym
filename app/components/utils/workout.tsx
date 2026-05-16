@@ -978,7 +978,7 @@ if (showSuccessView) {
                           </p>
                         </div>
 
-                        <span className="text-xs text-white">
+                        <span className="text-xs text-[#2ED843]">
                           {setTimes[
                             key
                           ]
@@ -987,7 +987,7 @@ if (showSuccessView) {
                                   key
                                 ]
                               )
-                            : "--:--"}
+                            :<div className="text-white"> --:--</div>}
                         </span>
                       </div>
                     );

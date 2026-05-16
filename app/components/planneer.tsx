@@ -317,7 +317,7 @@ const isToday = (date: Date) => {
 };
   return (
     <div className="py-4 lg:p-6 min-h-screen">
-      {console.log(workoutPlan)}
+  
        {view === "calendar" && (
       <>
       {loading ? (
@@ -374,7 +374,7 @@ const Icon =
 </p>
 
                 <div
- className={`rounded-xl p-3 min-h-25 text-white flex flex-col relative overflow-hidden
+ className={`rounded-xl p-3 min-h-25  text-white flex flex-col relative overflow-hidden 
 ${
   isAccessibleDay(date)
     ? isToday(date)
