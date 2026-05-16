@@ -60,11 +60,13 @@ const HabitChecklist = ({ data }: any) => {
   // 🔥 COMPLETED TODAY FROM APPWRITE (FIX)
 const today = new Date().toLocaleDateString("en-CA");
 
-const completedToday =
-  data2?.documents?.[0]?.habits?.some((item: string) => {
-    const [savedDate] = item.split(":");
-    return savedDate.trim() === today;
-  }) || false;
+const habitsFromDB =
+  data2?.documents?.[0]?.habits ?? [];
+
+const completedToday = habitsFromDB.some((item: string) => {
+  const [savedDate] = item.split(":");
+  return savedDate.trim() === today;
+});
   // =========================================
   // TOGGLE HABIT
   // =========================================
@@ -123,75 +125,77 @@ const completedToday =
   // =========================================
   // DONE BUTTON (APPWRITE ONLY)
   // =========================================
-  const submitHabits = async () => {
-    try {
-      setLoading(true);
+ const submitHabits = async () => {
+  try {
+    setLoading(true);
 
-      const allCompleted = habits.every((h) => h.checked);
-      if (!allCompleted) {
-        setLoading(false);
-        return alert("Complete all habits first");
-      }
+    const allCompleted = habits.every((h) => h.checked);
+    if (!allCompleted) {
+      return alert("Complete all habits first");
+    }
 
     const entry = `${today}: completed`;
 
-      try {
-        const existing = await databases.getDocument(
-          appwriteConfig.databaseId,
-          appwriteConfig.habitID,
-          user.$id
-        );
+    const existing = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.habitID,
+      user.$id
+    );
 
-        const updatedHabits = [...(existing.habits || []), entry];
+    const existingHabits = existing?.habits || [];
 
-        await databases.updateDocument(
-          appwriteConfig.databaseId,
-          appwriteConfig.habitID,
-          user.$id,
-          {
-            habits: updatedHabits,
-            users: user.$id,
-          }
-        );
-      } catch {
-        await databases.createDocument(
-          appwriteConfig.databaseId,
-          appwriteConfig.habitID,
-          user.$id,
-          {
-            habits: [entry],
-            users: user.$id,
-          }
-        );
-      }
+    // 🚨 prevent duplicate entries for same day
+    const alreadyDone = existingHabits.some((item: string) => {
+      const [savedDate] = item.split(":");
+      return savedDate.trim() === today;
+    });
 
-      const reset = habits.map((h) => ({ ...h, checked: false }));
-      saveHabits(reset);
-
-      alert("Done for today 🎉 Check back tomorrow!");
-      const updatedEntry = `${today}: completed`;
-
-setData2((prev: any) => {
-  const existingHabits =
-    prev?.documents?.[0]?.habits || [];
-
-  return {
-    ...prev,
-    documents: [
-      {
-        ...prev.documents[0],
-        habits: [...existingHabits, updatedEntry],
-      },
-    ],
-  };
-});
-    } catch (err) {
-      console.log(err);
-      alert("Something went wrong");
-    } finally {
-      setLoading(false);
+    if (alreadyDone) {
+      alert("You already completed today’s habits");
+      return;
     }
-  };
+
+    const updatedHabits = [...existingHabits, entry];
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.habitID,
+      user.$id,
+      {
+        habits: updatedHabits,
+        users: user.$id,
+      }
+    );
+
+    // reset UI
+    const reset = habits.map((h) => ({ ...h, checked: false }));
+    saveHabits(reset);
+
+    // update local state safely
+    setData2((prev: any) => {
+      const doc = prev?.documents?.[0];
+
+      if (!doc) return prev;
+
+      return {
+        ...prev,
+        documents: [
+          {
+            ...doc,
+            habits: updatedHabits,
+          },
+        ],
+      };
+    });
+
+    alert("Done for today 🎉 Check back tomorrow!");
+  } catch (err) {
+    console.log(err);
+    alert("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================================
   // UI (UNCHANGED)
