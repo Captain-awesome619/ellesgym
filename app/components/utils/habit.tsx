@@ -239,11 +239,11 @@ setData2((prev: any) => {
                   setShowMenu(showMenu === habit.id ? null : habit.id)
                 }
               >
-                <HiOutlineDotsVertical size={18} />
+                <HiOutlineDotsVertical size={18} className="cursor-pointer" />
               </button>
 
               {showMenu === habit.id && (
-                <div className="absolute right-0 top-7 bg-[#111] border border-white/10 rounded-lg w-28">
+                <div className="absolute right-0 top-7 bg-white/10 backdrop-blur-none  border border-white/10 rounded-lg w-28">
                   <button
                     onClick={() => editHabit(habit.id)}
                     className="w-full px-4 py-2 text-white hover:bg-white/10"

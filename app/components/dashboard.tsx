@@ -252,7 +252,7 @@ const longestStreak = (() => {
   
 
   <div
-  className="relative lg:w-180 lg:h-80 rounded-lg w-full h-60 bg-cover bg-center overflow-hidden flex flex-col gap-5 lg:px-8 lg:py-3 p-4"
+  className="relative lg:w-180 lg:h-80 rounded-lg w-full h-68 bg-cover bg-center overflow-hidden flex flex-col gap-5 lg:px-8 lg:py-3 p-4"
   style={{
     backgroundImage: `url(/${
       backgroundMap[todayWorkout?.goal] || "gymbackground2.jpg"
