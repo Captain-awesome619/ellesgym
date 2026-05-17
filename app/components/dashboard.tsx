@@ -174,7 +174,7 @@ const longestStreak = (() => {
 
   return (
     <div className="grid gap-6">
-    {console.log(data)}
+  
       <div className="flex flex-col gap-1">
         <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
           Welcome, {name || name2}
