@@ -61,9 +61,6 @@ useEffect(() => {
   fetchBio();
 }, [user?.$id]);
 
-
-
-  // check if session exists and has values
 // check if session exists and has values
 const hasSession =
   Array.isArray(data?.session) &&
@@ -174,7 +171,8 @@ const longestStreak = (() => {
 
   return (
     <div className="grid gap-6">
-  
+  {console.log(todayWorkout)}
+  {console.log(data)}
       <div className="flex flex-col gap-1">
         <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
           Welcome, {name || name2}
@@ -185,8 +183,6 @@ const longestStreak = (() => {
         </h4>
         
       </div>
-
-    
 {loading ? (
   <div className="flex items-center justify-center h-[60vh]">
     <ClipLoader color="#2ED843" size={60} />

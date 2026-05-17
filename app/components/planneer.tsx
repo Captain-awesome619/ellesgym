@@ -190,7 +190,7 @@ useEffect(() => {
           day: i + 1,
           type: "workout",
           goal,
-          level: pick.level,
+          level: data.experience,
           muscleGroup: pick.muscleGroup,
           routine: pick.routine,
           exercises: pick.exercises,
@@ -321,8 +321,9 @@ const isToday = (date: Date) => {
        {view === "calendar" && (
       <>
       {loading ? (
-        <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex flex-col gap-4 justify-center items-center h-[60vh]">
           <ClipLoader color="#2ED843" size={40} />
+          <h4 className="font-normal text-white">Loading workout planner </h4>
         </div>
       ) : (
         <div>
