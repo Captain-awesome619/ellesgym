@@ -5,7 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useGlobalContext } from "@/app/context/globalprovider";
 import { databases, appwriteConfig, gethabits } from "@/app/lib/appwrite";
 
-const HabitChecklist = ({ data }: any) => {
+const HabitChecklist = ({ data, onUpdate }: any) => {
   const { user } = useGlobalContext();
   const [data2, setData2] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -170,7 +170,7 @@ const HabitChecklist = ({ data }: any) => {
         ...prev,
         habits: updatedHabits,
       }));
-
+if (onUpdate) onUpdate();
       alert("Done for today 🎉 Check back tomorrow!");
     } catch (err) {
       console.log(err);

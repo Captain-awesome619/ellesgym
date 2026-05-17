@@ -16,24 +16,23 @@ const Dashboard = ({ user, start }: { user: any; start: () => void }) => {
 const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
  const [data2, setData2] = useState<any>(null);
+const [refreshKey, setRefreshKey] = useState(0);
 
 
+useEffect(() => {
+  if (!user?.$id) return;
 
- useEffect(() => {
-    if (!user?.$id) return;
+  const fetchHabits = async () => {
+    try {
+      const posts = await gethabits(user.$id);
+      setData2(posts);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    const fetchHabits = async () => {
-      try {
-        const posts = await gethabits(user.$id);
-        setData2(posts);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchHabits();
-
-  }, [user?.$id]);
+  fetchHabits();
+}, [user?.$id, refreshKey]);
 
 useEffect(() => {
   if (!user?.$id) return;
@@ -321,7 +320,7 @@ Print Workout Card
     </div>
 
 <div  className="flex lg:flex-row flex-col lg:gap-8 gap-6 w-full "> 
-<HabitChecklist />
+<HabitChecklist onUpdate={() => setRefreshKey((p) => p + 1)} />
 <div className="lg:w-[70%]">
 <Chart />
 </div>
