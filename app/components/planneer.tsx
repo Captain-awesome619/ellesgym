@@ -129,11 +129,19 @@ useEffect(() => {
 
       const validGoals = goals.filter((g) => EXERCISES[g]);
 
-      if (!validGoals.length) return;
+      if (!validGoals.length) {
+        setLoading(false);
+        setCreatingPlan(false);
+        return;
+      }
 
       const now = new Date();
 
       const generated: any[] = [];
+
+      // NORMALIZED USER EXPERIENCE
+      const userLevel =
+        data?.experience?.trim().toLowerCase();
 
       // GENERATE EXACTLY 30 DAYS
       for (let i = 0; i < 30; i++) {
@@ -162,27 +170,28 @@ useEffect(() => {
 
         const routines = EXERCISES[goal];
 
-        // USER EXPERIENCE LEVEL
-        const userLevel =
-          data?.experience?.charAt(0).toUpperCase() +
-          data?.experience?.slice(1).toLowerCase();
-
-        // FILTER ROUTINES BY EXPERIENCE LEVEL
-        const filteredRoutines = routines.filter(
-          (item) => item.level === userLevel
+        // FILTER ROUTINES STRICTLY BY EXPERIENCE
+        const matchedRoutines = routines.filter(
+          (item) =>
+            item.level.toLowerCase() === userLevel
         );
 
-        // FALLBACK IF NO MATCH
-        const availableRoutines =
-          filteredRoutines.length > 0
-            ? filteredRoutines
-            : routines;
+        // IF NO MATCHED ROUTINE EXISTS
+        // MAKE IT A REST DAY INSTEAD
+        if (!matchedRoutines.length) {
+          generated.push({
+            day: i + 1,
+            type: "rest",
+          });
 
-        // RANDOM PICK FROM MATCHED LEVEL
+          continue;
+        }
+
+        // RANDOM PICK ONLY FROM MATCHED LEVEL
         const pick =
-          availableRoutines[
+          matchedRoutines[
             Math.floor(
-              Math.random() * availableRoutines.length
+              Math.random() * matchedRoutines.length
             )
           ];
 
@@ -190,12 +199,13 @@ useEffect(() => {
           day: i + 1,
           type: "workout",
           goal,
-          level: data.experience,
+          level: pick.level,
           muscleGroup: pick.muscleGroup,
           routine: pick.routine,
           exercises: pick.exercises,
-duration : data?.duration ,
-          // NEW ENRICHED FIELDS
+          duration: data?.duration,
+
+          // ENRICHED FIELDS
           description: pick.description,
           equipment: pick.equipment,
           overview: pick.overview,
