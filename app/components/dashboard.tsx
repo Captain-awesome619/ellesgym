@@ -64,28 +64,42 @@ useEffect(() => {
 
 
   // check if session exists and has values
+// check if session exists and has values
 const hasSession =
   Array.isArray(data?.session) &&
   data.session.length > 0;
 
+// 🔥 FIXED: stable UTC day index calculation
 const getDayIndex = (startDate: string) => {
   const start = new Date(startDate);
   const today = new Date();
 
-  const diffTime = today.getTime() - start.getTime();
+  const startUTC = Date.UTC(
+    start.getUTCFullYear(),
+    start.getUTCMonth(),
+    start.getUTCDate()
+  );
 
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const todayUTC = Date.UTC(
+    today.getUTCFullYear(),
+    today.getUTCMonth(),
+    today.getUTCDate()
+  );
+
+  return Math.floor((todayUTC - startUTC) / (1000 * 60 * 60 * 24));
 };
 
-const dayIndex = data?.startDate
-  ? Math.min(
-      getDayIndex(data.startDate),
-      data.session.length - 1
-    )
-  : 0;
+// 🔥 SAFE INDEX (prevents crashes + out-of-range)
+const dayIndex =
+  data?.startDate && Array.isArray(data?.session)
+    ? Math.max(
+        0,
+        Math.min(getDayIndex(data.startDate), data.session.length - 1)
+      )
+    : 0;
 
-  const todayWorkout = data?.session?.[dayIndex];
-
+// 🔥 FINAL TODAY WORKOUT (always correct mapping)
+const todayWorkout = data?.session?.[dayIndex] ?? null;
 
   const backgroundMap: Record<any, string> = {
   strength: "strength1.jpg",
@@ -160,7 +174,7 @@ const longestStreak = (() => {
 
   return (
     <div className="grid gap-6">
-    
+    {console.log(data)}
       <div className="flex flex-col gap-1">
         <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
           Welcome, {name || name2}
