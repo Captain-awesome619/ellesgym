@@ -209,7 +209,7 @@ const longestStreak = (() => {
             </h4>
 <h4 className="font-semibold lg:text-[15px] text-[13px] text-white">
   {currentStreak === 0
-    ? "No streak yet — le's change that today 🚀"
+    ? "No streak yet? let's change that today 🚀"
     : "Keep it up 💪 You're doing great"}
 </h4>
           </div>

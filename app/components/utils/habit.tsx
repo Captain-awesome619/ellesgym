@@ -225,7 +225,7 @@ if (onUpdate) onUpdate();
                   setShowMenu(showMenu === habit.id ? null : habit.id)
                 }
               >
-                <HiOutlineDotsVertical size={18} />
+                <HiOutlineDotsVertical size={18} color="white" />
               </button>
 
               {showMenu === habit.id && (
