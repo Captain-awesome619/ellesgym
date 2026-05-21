@@ -27,8 +27,7 @@ import completee from '../../../public/complete.svg'
 import { IoIosWarning } from "react-icons/io";
 import { appwriteConfig } from "@/app/lib/appwrite";
 import badge from '../../../public/badge.svg'
-
-
+import { useRecords } from "@/app/store/records";
 Modal.setAppElement("body");
 
 
@@ -46,6 +45,21 @@ const Workout = ({
   onWorkoutSaved: (entry: string) => void;
 }) => {
   const item = data?.item;
+
+
+const {
+  completeCount,
+  longestStreakk,
+  setComplete,
+  setLongestStreak,
+} = useRecords();
+
+const setCompletee = useRecords(
+  (state) => state.setComplete
+);
+
+
+
 
   // UNIQUE STORAGE KEY
  const STORAGE_KEY = useMemo(() => {
@@ -405,6 +419,13 @@ const progress =
       100
     : 100;
 
+useEffect(() => {
+  if (completeCount !== undefined) {
+    setCompletee(completedCount);
+  }
+  console.log("Complete count updated:", completeCount);
+  console.log(completedCount)
+}, [completedCount, completeCount]);
 
 if (showSuccessView) {
   return (
@@ -463,7 +484,7 @@ if (showSuccessView) {
 
 
    {/* EXERCISES */}
-          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-2">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-2">
 
          
 
@@ -478,7 +499,7 @@ if (showSuccessView) {
           </div>
 
           {/* EXERCISES */}
-          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2">
 <div  className="flex gap-4 items-center justify-center" >
            <Image 
           src={weight}
@@ -513,7 +534,7 @@ if (showSuccessView) {
  
 <div className="lg:hidden flex">
  {showNewBadge && (
-    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
       
       {/* PLACEHOLDER BADGE */}
      <Image 
@@ -544,7 +565,7 @@ if (showSuccessView) {
 
 
   {/* PROGRESS CARD */}
-  <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-3xl p-8 w-full flex flex-col gap-5 justify-center">
+  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col gap-5 justify-center">
     {/* PROGRESS BAR */}
     <div className="w-full h-2 bg-white rounded-full overflow-hidden">
       <div
@@ -585,7 +606,7 @@ if (showSuccessView) {
 
 <div className="lg:flex hidden">
  {showNewBadge && (
-    <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
       
       {/* PLACEHOLDER BADGE */}
      <Image 
@@ -920,7 +941,7 @@ if (showSuccessView) {
               ) => (
                 <div
                   key={idx}
-                  className="bg-white/10 backdrop-blur-none border border-white/10  rounded-xl p-4"
+                  className="bg-white/5 backdrop-blur-md border border-white/10  rounded-xl p-4"
                 >
                   {/* EXERCISE NAME */}
                   <h4 className="font-bold text-lg mb-4">
@@ -1026,7 +1047,7 @@ if (showSuccessView) {
             </button>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-none border border-white/10 w-80 h-full flex flex-col gap-3 p-6 rounded-xl">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 w-80 h-full flex flex-col gap-3 p-6 rounded-xl">
             <div className="grid gap-2">
               <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">
                 Bench Press

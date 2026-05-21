@@ -146,7 +146,7 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
       });
 
       if (alreadyDone) {
-        alert("You already completed today’s habits");
+        alert("You already completed today's habits");
         return;
       }
 
@@ -184,7 +184,7 @@ if (onUpdate) onUpdate();
   // UI (UNCHANGED)
   // =========================================
   return (
-    <div className=" bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
+    <div className=" bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
 
       <h2 className="text-white font-bold text-[22px] mb-6">
         Habit Checklist
@@ -275,7 +275,7 @@ if (onUpdate) onUpdate();
         <button
           onClick={submitHabits}
           disabled={loading}
-          className="mt-6 bg-[#2ED843] text-black font-bold py-3 rounded-lg"
+          className="mt-6 bg-[#2ED843] text-black font-bold py-3 rounded-lg cursor-pointer"
         >
           {loading ? <ClipLoader color="black" size={20} /> : "Done"}
         </button>

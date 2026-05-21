@@ -21,6 +21,8 @@ import { useGlobalContext } from "../context/globalprovider";
 import { IoNotifications } from "react-icons/io5";
 import Dashboard from "../components/dashboard";
 import Planneer from "../components/planneer";
+import Profile from "../components/profile";
+
 
 const navItems = [
   { name: "Dashboard", icon: FiHome },
@@ -61,14 +63,16 @@ function Start() {
 }
 
   return (
-    <div className="relative h-screen w-screen flex overflow-hidden">
+    <div className="relative h-full w-screen flex overflow-hidden">
      
      
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('shapelift.jpg')",
-        }}
+  backgroundImage: `url(${
+    selected === "Profile" ? "medals.jpg" : "shapelift.jpg"
+  })`,
+}}
       />
 
       {/* Dark + Blur Overlay */}
@@ -212,7 +216,7 @@ function Start() {
 
             {selected === "Profile" && (
               <div className="min-h-375 text-white text-3xl font-bold">
-                Profile Page Content
+                <Profile />
               </div>
             )}
           </main>

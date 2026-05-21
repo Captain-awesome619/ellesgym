@@ -10,6 +10,10 @@ import { FaShuffle } from "react-icons/fa6";
 import HabitChecklist from "./utils/habit";
 import { gethabits } from "../lib/appwrite";
 import Chart from "./utils/chart";
+import { useRecords } from "../store/records";
+
+
+
 const Dashboard = ({ user, start }: { user: any; start: () => void }) => {
   const name = user?.fullname?.trim().split(" ")[0];
   const name2 = user?.name?.trim().split(" ")[0];
@@ -17,6 +21,16 @@ const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
  const [data2, setData2] = useState<any>(null);
 const [refreshKey, setRefreshKey] = useState(0);
+const {
+  completeCount,
+  longestStreakk,
+  setComplete,
+  setLongestStreak,
+} = useRecords();
+
+const  setLongestStreakk = useRecords(
+  (state) => state.setLongestStreak
+);
 
 
 useEffect(() => {
@@ -166,12 +180,18 @@ const longestStreak = (() => {
   return maxStreak;
 })();
   
-
+useEffect(() => {
+  if (longestStreak !== undefined) {
+    setLongestStreakk(longestStreak);
+  }
+  console.log("Complete count updated:", longestStreakk);
+  console.log(longestStreak)
+}, [longestStreakk, longestStreak]);
 
 
   return (
     <div className="grid gap-6">
-  
+
       <div className="flex flex-col gap-1">
         <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
           Welcome, {name || name2}
@@ -189,7 +209,7 @@ const longestStreak = (() => {
 ) : hasSession ? (
   <div className="flex flex-col gap-5 w-full lg:items-center ">
     <div className="flex lg:flex-row flex-col lg:gap-8 gap-6 w-full  ">
-      <div className="flex flex-col p-5 bg-white/10 backdrop-blur-none lg:w-70 gap-10 rounded-lg">
+      <div className="flex flex-col p-5 bg-white/5 backdrop-blur-md lg:w-70 gap-10 rounded-lg">
         <div className="flex justify-between items-center w-full">
           <h4 className="font-semibold lg:text-[18px] text-[15px] text-white">
             Daily Streak
