@@ -67,7 +67,7 @@ const isPlanExpired = (start: Date) => {
     fetchBio();
   }, [user?.$id]);
 
-  // GENERATE PLAN
+// GENERATE PLAN
 useEffect(() => {
   if (!data || !user?.$id || creatingPlan) return;
 
@@ -88,12 +88,8 @@ useEffect(() => {
           ? new Date(saved.startDate)
           : new Date();
 
-        // CHECK IF PLAN EXPIRED
         const expired = isPlanExpired(savedStartDate);
 
-        // =========================================
-        // USE EXISTING PLAN
-        // =========================================
         if (!expired) {
           const parsed = saved?.session.map((item: string) =>
             JSON.parse(item)
@@ -105,13 +101,9 @@ useEffect(() => {
 
           setLoading(false);
           setCreatingPlan(false);
-
           return;
         }
 
-        // =========================================
-        // DELETE OLD PLAN IF EXPIRED
-        // =========================================
         if (saved) {
           await databases.deleteDocument(
             appwriteConfig.databaseId,
@@ -125,9 +117,8 @@ useEffect(() => {
       // CREATE NEW PLAN
       // =========================================
 
-      const goals: string[] = data.goal || [];
-
-      const validGoals = goals.filter((g) => EXERCISES[g]);
+      const goals: string[] = data?.goal || [];
+      const validGoals = goals.filter((g) => EXERCISES?.[g]);
 
       if (!validGoals.length) {
         setLoading(false);
@@ -139,64 +130,78 @@ useEffect(() => {
 
       const generated: any[] = [];
 
-      // NORMALIZED USER EXPERIENCE
-      const userLevel =
-        data?.experience?.trim().toLowerCase();
+      const userLevel = (data?.experience || "")
+        .trim()
+        .toLowerCase();
 
-      // GENERATE EXACTLY 30 DAYS
+      const schedule = (data?.schedule || []).map((d: string) =>
+        d.toLowerCase()
+      );
+
+      // stable weekday mapping (NO LOCALE BUG)
+      const WEEKDAYS = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ];
+
       for (let i = 0; i < 30; i++) {
         const currentDate = new Date(now);
-
         currentDate.setDate(now.getDate() + i);
 
-        const workoutDay = isWorkoutDay(currentDate);
+        const weekday = WEEKDAYS[currentDate.getDay()];
+        const isScheduled = schedule.includes(weekday);
 
         // =========================================
-        // REST DAY
+        // FORCE REST IF NOT IN SCHEDULE
         // =========================================
-        if (!workoutDay) {
+        if (!isScheduled) {
           generated.push({
             day: i + 1,
+            date: currentDate.toISOString(),
             type: "rest",
+            reason: "not in user schedule",
           });
-
           continue;
         }
 
         // =========================================
         // WORKOUT DAY
         // =========================================
+
         const goal = validGoals[i % validGoals.length];
+        const routines = EXERCISES?.[goal] || [];
 
-        const routines = EXERCISES[goal];
-
-        // FILTER ROUTINES STRICTLY BY EXPERIENCE
         const matchedRoutines = routines.filter(
           (item) =>
-            item.level.toLowerCase() === userLevel
+            item?.level?.toLowerCase?.() === userLevel
         );
 
-        // IF NO MATCHED ROUTINE EXISTS
-        // MAKE IT A REST DAY INSTEAD
+        // fallback (debuggable, not silent logic failure)
         if (!matchedRoutines.length) {
           generated.push({
             day: i + 1,
+            date: currentDate.toISOString(),
             type: "rest",
+            reason: "no matching routine for level",
+            goal,
+            fallback: true,
           });
-
           continue;
         }
 
-        // RANDOM PICK ONLY FROM MATCHED LEVEL
         const pick =
           matchedRoutines[
-            Math.floor(
-              Math.random() * matchedRoutines.length
-            )
+            Math.floor(Math.random() * matchedRoutines.length)
           ];
 
         generated.push({
           day: i + 1,
+          date: currentDate.toISOString(),
           type: "workout",
           goal,
           level: pick.level,
@@ -204,8 +209,6 @@ useEffect(() => {
           routine: pick.routine,
           exercises: pick.exercises,
           duration: data?.duration,
-
-          // ENRICHED FIELDS
           description: pick.description,
           equipment: pick.equipment,
           overview: pick.overview,
@@ -233,7 +236,7 @@ useEffect(() => {
       setWorkoutPlan(generated);
       setStartDate(now);
     } catch (error) {
-      console.error(error);
+      console.error("Workout plan generation error:", error);
     } finally {
       setLoading(false);
       setCreatingPlan(false);
@@ -298,20 +301,8 @@ const isAccessibleDay = (date: Date) => {
   return checkDate <= today;
 };
 
-const getScheduledDays = () => {
-  // supports: ["monday", "wednesday"] OR [1,3,5]
-  return (data?.schedule || []).map((d: string) => d.toLowerCase());
-};
 
-const isWorkoutDay = (date: Date) => {
-  const schedule = getScheduledDays();
 
-  const weekday = date
-    .toLocaleDateString("en-US", { weekday: "long" })
-    .toLowerCase();
-
-  return schedule.includes(weekday);
-};
  const handleWorkoutSaved = (entry: string) => {
   setCompletedDays((prev) => [...prev, entry]);
 };
@@ -325,6 +316,9 @@ const isToday = (date: Date) => {
     date.getFullYear() === today.getFullYear()
   );
 };
+
+
+
   return (
     <div className="py-4 lg:p-6 min-h-screen">
   
@@ -395,7 +389,7 @@ ${
 }
 `}
  onClick={() => {
-  if (!isAccessibleDay(date)) return;
+  if (!isToday(date)) return;;
 
   // ✅ already completed
   if (status === "completed" || status === "uncompleted") return;
