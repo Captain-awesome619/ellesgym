@@ -66,23 +66,6 @@ export const EXERCISES: Record<
       tips: ["Explosive control", "Perfect form", "Slow eccentric"],
       commonMistakes: ["Swinging", "Poor stabilization", "Incomplete reps"],
     },
-
-    {
-      routine: "Lower Body Strength",
-      level: "Beginner",
-      muscleGroup: "Legs & Glutes",
-      exercises: [
-        "Bodyweight Squats",
-        "Glute Bridges",
-        "Step-ups",
-        "Walking Lunges",
-      ],
-      description: "Foundational lower-body strength development.",
-      equipment: "Bodyweight",
-      overview: "Builds leg strength and mobility.",
-      tips: ["Drive through heels", "Keep chest up", "Control depth"],
-      commonMistakes: ["Knee collapse", "Rounded back", "Shallow squats"],
-    },
   ],
 
   endurance: [
@@ -167,6 +150,24 @@ export const EXERCISES: Record<
       tips: ["Deep range", "Controlled tempo"],
       commonMistakes: ["Locking joints", "Momentum lifting"],
     },
+
+    {
+      routine: "Advanced Mass Builder",
+      level: "Expert",
+      muscleGroup: "Full Body Hypertrophy",
+      exercises: [
+        "Deadlifts",
+        "Weighted Dips",
+        "Heavy Squats",
+        "Incline Dumbbell Press",
+      ],
+      description:
+        "Advanced hypertrophy training focused on maximum muscle growth.",
+      equipment: "Barbell, Dumbbells",
+      overview: "Maximizes muscular size and strength.",
+      tips: ["Progressive overload", "Control eccentric movement"],
+      commonMistakes: ["Overtraining", "Poor recovery"],
+    },
   ],
 
   "weight-loss": [
@@ -191,12 +192,35 @@ export const EXERCISES: Record<
       routine: "Full Body Burn",
       level: "Intermediate",
       muscleGroup: "Full Body",
-      exercises: ["Burpees", "Kettlebell Swings", "Jump Squats", "Plank"],
+      exercises: [
+        "Burpees",
+        "Kettlebell Swings",
+        "Jump Squats",
+        "Plank",
+      ],
       description: "Full-body fat-burning circuit training.",
       equipment: "Kettlebell, Bodyweight",
       overview: "High calorie burn conditioning.",
       tips: ["Fast transitions", "Controlled form"],
       commonMistakes: ["Poor form under fatigue"],
+    },
+
+    {
+      routine: "HIIT Shred",
+      level: "Expert",
+      muscleGroup: "Full Body Conditioning",
+      exercises: [
+        "Sprint Circuits",
+        "Box Jumps",
+        "Battle Ropes",
+        "Burpee Pull-ups",
+      ],
+      description:
+        "Advanced fat-loss conditioning with high-intensity intervals.",
+      equipment: "Box, Pull-up Bar, Ropes",
+      overview: "Accelerates calorie burn and conditioning.",
+      tips: ["Push intensity", "Short recovery periods"],
+      commonMistakes: ["Poor pacing", "Ignoring recovery"],
     },
   ],
 
@@ -217,6 +241,42 @@ export const EXERCISES: Record<
       tips: ["Move slowly", "Breathe deeply"],
       commonMistakes: ["Forcing stretches"],
     },
+
+    {
+      routine: "Dynamic Flexibility",
+      level: "Intermediate",
+      muscleGroup: "Full Body Mobility",
+      exercises: [
+        "World’s Greatest Stretch",
+        "Dynamic Hamstring Stretch",
+        "Shoulder Mobility Flow",
+        "Lunge Twists",
+      ],
+      description:
+        "Intermediate flexibility work improving athletic movement.",
+      equipment: "Bodyweight",
+      overview: "Enhances range of motion and recovery.",
+      tips: ["Control movement", "Stay consistent"],
+      commonMistakes: ["Bouncing stretches"],
+    },
+
+    {
+      routine: "Advanced Mobility Flow",
+      level: "Expert",
+      muscleGroup: "Full Body Flexibility",
+      exercises: [
+        "Deep Squat Holds",
+        "Pigeon Stretch",
+        "Jefferson Curl",
+        "Bridge Holds",
+      ],
+      description:
+        "Advanced mobility and flexibility progression routine.",
+      equipment: "Yoga Mat, Light Weights",
+      overview: "Improves advanced flexibility and joint control.",
+      tips: ["Focus on breathing", "Increase range gradually"],
+      commonMistakes: ["Overstretching", "Holding breath"],
+    },
   ],
 
   "general-fitness": [
@@ -230,6 +290,41 @@ export const EXERCISES: Record<
       overview: "Builds overall fitness base.",
       tips: ["Consistency matters", "Focus on form"],
       commonMistakes: ["Rushing reps"],
+    },
+
+    {
+      routine: "Functional Conditioning",
+      level: "Intermediate",
+      muscleGroup: "Full Body",
+      exercises: [
+        "Push-ups",
+        "Walking Lunges",
+        "Mountain Climbers",
+        "Russian Twists",
+      ],
+      description: "Intermediate full-body functional training.",
+      equipment: "Bodyweight, Dumbbells",
+      overview: "Improves strength, mobility, and endurance.",
+      tips: ["Maintain rhythm", "Engage core"],
+      commonMistakes: ["Poor breathing", "Bad posture"],
+    },
+
+    {
+      routine: "Elite Functional Fitness",
+      level: "Expert",
+      muscleGroup: "Athletic Full Body",
+      exercises: [
+        "Thrusters",
+        "Pull-ups",
+        "Box Jumps",
+        "Farmer Carries",
+      ],
+      description:
+        "Advanced functional training for peak overall fitness.",
+      equipment: "Barbell, Dumbbells, Plyo Box",
+      overview: "Combines strength, endurance, and athleticism.",
+      tips: ["Explosive movement", "Recover properly"],
+      commonMistakes: ["Using momentum", "Poor recovery"],
     },
   ],
 };

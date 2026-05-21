@@ -321,7 +321,7 @@ const isToday = (date: Date) => {
 
   return (
     <div className="py-4 lg:p-6 min-h-screen">
-  
+  {console.log(data)}
        {view === "calendar" && (
       <>
       {loading ? (
