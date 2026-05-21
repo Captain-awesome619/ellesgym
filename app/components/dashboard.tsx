@@ -26,10 +26,16 @@ const {
   longestStreakk,
   setComplete,
   setLongestStreak,
+  setCurrentStreak,
+  currentStreakk
 } = useRecords();
 
 const  setLongestStreakk = useRecords(
   (state) => state.setLongestStreak
+);
+
+const  setCurrent = useRecords(
+  (state) => state.setCurrentStreak
 );
 
 
@@ -184,6 +190,9 @@ useEffect(() => {
   if (longestStreak !== undefined) {
     setLongestStreakk(longestStreak);
   }
+  if (currentStreak !== undefined) {
+    setCurrent(currentStreak);
+   }
   console.log("Complete count updated:", longestStreakk);
   console.log(longestStreak)
 }, [longestStreakk, longestStreak]);
