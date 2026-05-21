@@ -124,21 +124,31 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
   // DONE BUTTON
   // =========================================
   const submitHabits = async () => {
+  try {
+    setLoading(true);
+
+    const allCompleted = habits.every((h) => h.checked);
+
+    if (!allCompleted) {
+      alert("Complete all habits first");
+      return;
+    }
+
+    const entry = `${today}: completed`;
+
+    let existingHabits: string[] = [];
+
     try {
-      setLoading(true);
-
-      const allCompleted = habits.every((h) => h.checked);
-      if (!allCompleted) return alert("Complete all habits first");
-
-      const entry = `${today}: completed`;
-
+      // =========================================
+      // TRY GET EXISTING DOCUMENT
+      // =========================================
       const existing = await databases.getDocument(
         appwriteConfig.databaseId,
         appwriteConfig.habitID,
         user.$id
       );
 
-      const existingHabits = existing?.habits || [];
+      existingHabits = existing?.habits || [];
 
       const alreadyDone = existingHabits.some((item: string) => {
         const [savedDate] = item.split(":");
@@ -152,6 +162,9 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
 
       const updatedHabits = [...existingHabits, entry];
 
+      // =========================================
+      // UPDATE EXISTING DOCUMENT
+      // =========================================
       await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.habitID,
@@ -162,23 +175,49 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
         }
       );
 
-      // reset UI
-      saveHabits(habits.map((h) => ({ ...h, checked: false })));
-
-      // FIX: update local state safely (NO documents array)
       setData2((prev: any) => ({
         ...prev,
         habits: updatedHabits,
       }));
-if (onUpdate) onUpdate();
-      alert("Done for today 🎉 Check back tomorrow!");
-    } catch (err) {
-      console.log(err);
-      alert("Something went wrong");
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      // =========================================
+      // DOCUMENT DOESN'T EXIST → CREATE IT
+      // =========================================
+      if (err.code === 404) {
+        await databases.createDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.habitID,
+          user.$id,
+          {
+            habits: [entry],
+            users: user.$id,
+          }
+        );
+
+        setData2({
+          habits: [entry],
+          users: user.$id,
+        });
+      } else {
+        throw err;
+      }
     }
-  };
+
+    // =========================================
+    // RESET CHECKBOXES
+    // =========================================
+    saveHabits(habits.map((h) => ({ ...h, checked: false })));
+
+    if (onUpdate) onUpdate();
+
+    alert("Done for today 🎉 Check back tomorrow!");
+  } catch (err) {
+    console.log(err);
+    alert("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // =========================================
   // UI (UNCHANGED)
