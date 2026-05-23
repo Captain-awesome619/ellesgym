@@ -63,21 +63,19 @@ const initial2 = user?.name?.trim()?.charAt(0)?.toUpperCase() || "";
 function Start() {
   setSelected('Planner')
 }
-
+const backgroundImages: Record<string, string> = {
+  Profile: "medals.jpg",
+  Progress: "progress.jpg",
+  Challenges: "challenge.jpg",
+};
   return (
     <div className="relative h-full w-screen flex overflow-hidden">
      
      
-      <div
+     <div
   className="absolute inset-0 bg-cover bg-center bg-no-repeat"
   style={{
-    backgroundImage: `url(${
-      selected === "Profile"
-        ? "medals.jpg"
-        : selected === "Progress"
-        ? "progress.jpg"
-        : "shapelift.jpg"
-    })`,
+    backgroundImage: `url(${backgroundImages[selected] || "shapelift.jpg"})`,
   }}
 />
 

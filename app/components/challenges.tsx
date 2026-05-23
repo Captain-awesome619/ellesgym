@@ -307,7 +307,7 @@ useEffect(() => {
           <span className="text-white/60 text-[12px] uppercase tracking-wider font-semibold">
             Current Target
           </span>
-          <span className="text-xl font-bold text-white/90">
+          <span className="text-xl font-bold text-[#2ED843]">
             {activeChallenge ? `${activeChallenge} Day Challenge` : "None Active"}
           </span>
         </div>
