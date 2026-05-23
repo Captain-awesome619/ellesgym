@@ -871,14 +871,14 @@ if (showSuccessView) {
           </button>
 
           <div className="flex flex-col items-center justify-center gap-2 lg:items-start lg:justify-start mb-5">
-            <h2 className="font-bold text-[15px] lg:text-[30px]">
+            <h2 className="font-bold text-[15px] lg:text-[30px] text-white">
               <span className="text-[#2ED843]">
                 Goal:
               </span>{" "}
               {item.goal}
             </h2>
 
-            <h3 className="font-semibold text-[14px] lg:text-[20px]">
+            <h3 className="font-semibold text-[14px] lg:text-[20px] text-white">
               <span className="text-[#2ED843]">
                 Routine:
               </span>{" "}
@@ -941,10 +941,10 @@ if (showSuccessView) {
               ) => (
                 <div
                   key={idx}
-                  className="bg-white/5 backdrop-blur-md border border-white/10  rounded-xl p-4"
+                  className="bg-white/5 backdrop-blur-md border border-white/10 text-white  rounded-xl p-4"
                 >
                   {/* EXERCISE NAME */}
-                  <h4 className="font-bold text-lg mb-4">
+                  <h4 className="font-bold text-lg mb-4 text-white">
                     {ex}
                   </h4>
 
