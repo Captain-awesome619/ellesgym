@@ -146,37 +146,55 @@ useEffect(() => {
   let trackingDateStamp = active.lastUpdated;
 
   // 1. FIRST: PASSIVE CHECK FOR HISTORICAL SKIPPED DAYS
-  if (active.lastUpdated && active.lastUpdated !== todayStr) {
-    const lastWorkoutDate = new Date(active.lastUpdated);
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+// 1. CHECK IF USER MISSED ANY REQUIRED WORKOUT DAYS
+if (active.lastUpdated) {
+  const lastWorkoutDate = new Date(active.lastUpdated);
 
-    let trackingDate = new Date(lastWorkoutDate);
-    let skippedWorkoutDays = 0;
+  // Start checking from the NEXT calendar day
+  const checkDate = new Date(lastWorkoutDate);
+  checkDate.setDate(checkDate.getDate() + 1);
 
-    while (trackingDate < yesterday) {
-      trackingDate.setDate(trackingDate.getDate() + 1);
-      
-      const currentDayName = trackingDate.toLocaleDateString("en-US", { weekday: "long" });
-      const trackingDateStr = trackingDate.toDateString();
+  const today = new Date();
 
-      const wasDayCompleted = completedEntries.some(entry => {
-        const [dateStr, status] = entry.split(":");
-        return new Date(dateStr).toDateString() === trackingDateStr && status === "completed";
-      });
+  // Normalize times
+  today.setHours(0, 0, 0, 0);
+  checkDate.setHours(0, 0, 0, 0);
 
-      if (!wasDayCompleted && !restDays.includes(currentDayName)) {
-        skippedWorkoutDays++;
-      }
+  let missedRequiredDay = false;
+
+  // ONLY check days BEFORE today
+  while (checkDate < today) {
+    const currentDayName = checkDate.toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    const checkDateStr = checkDate.toDateString();
+
+    const wasCompleted = completedEntries.some((entry) => {
+      const [dateStr, status] = entry.split(":");
+
+      return (
+        new Date(dateStr).toDateString() === checkDateStr &&
+        status === "completed"
+      );
+    });
+
+    // If it's not a rest day and workout wasn't completed
+    if (!restDays.includes(currentDayName) && !wasCompleted) {
+      missedRequiredDay = true;
+      break;
     }
 
-    // If they missed a workout day in the past, drop them straight to 0
-    if (skippedWorkoutDays > 0) {
-      nextStreak = 0;
-      trackingDateStamp = yesterday.toDateString(); // Moves baseline up to yesterday
-      shouldUpdateBackend = true;
-    }
+    checkDate.setDate(checkDate.getDate() + 1);
   }
+
+  // Reset ONLY if they truly missed a required day
+ if (missedRequiredDay) {
+  nextStreak = 0;
+  trackingDateStamp = todayStr;
+  shouldUpdateBackend = true;
+}
+}
 
   // 2. SECOND: INCREMENT IF THEY FINISHED TODAY'S WORKOUT
   // FIXED: Check trackingDateStamp here so it knows if Step 1 already moved the timeline baseline forward
