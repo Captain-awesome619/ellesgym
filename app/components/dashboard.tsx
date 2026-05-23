@@ -149,12 +149,22 @@ const currentStreak = (() => {
 
   if (dates.length === 0) return 0;
 
-  // 🔥 must include today or streak is invalid
-  if (!dates.includes(today)) return 0;
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+  const hasCompletedToday = dates.includes(today);
+  const hasCompletedYesterday = dates.includes(yesterdayStr);
+
+  // If they didn't work out today AND didn't work out yesterday, the streak is officially broken.
+  if (!hasCompletedToday && !hasCompletedYesterday) return 0;
 
   let streak = 1;
+  
+  // Start tracking backwards from whatever the last logged workout date is
+  const startingIndex = hasCompletedToday ? dates.length - 1 : dates.indexOf(yesterdayStr);
 
-  for (let i = dates.length - 1; i > 0; i--) {
+  for (let i = startingIndex; i > 0; i--) {
     if (isNextDay(dates[i - 1], dates[i])) {
       streak++;
     } else {
@@ -164,7 +174,6 @@ const currentStreak = (() => {
 
   return streak;
 })();
-
 
 const longestStreak = (() => {
   const dates = extractDates(data2?.habits || []);

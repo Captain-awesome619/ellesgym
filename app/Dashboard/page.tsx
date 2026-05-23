@@ -23,6 +23,8 @@ import Dashboard from "../components/dashboard";
 import Planneer from "../components/planneer";
 import Profile from "../components/profile";
 import Progress from "../components/progress";
+import Challenges from "../components/challenges";
+
 
 const navItems = [
   { name: "Dashboard", icon: FiHome },
@@ -189,31 +191,31 @@ function Start() {
             )}
 
             {selected === "Meal Guide" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
+              <div className=" text-white text-3xl font-bold">
                 Meal Guide Page Content
               </div>
             )}
 
             {selected === "Progress" && (
-              <div className=" ext-3xl font-bold">
+              <div className=" ">
                 <Progress />
               </div>
             )}
 
             {selected === "Challenges" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
-                Challenges Page Content
+              <div className=" text-white text-3xl font-bold">
+                <Challenges />
               </div>
             )}
 
             {selected === "Leaderboard" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
+              <div className=" text-white text-3xl font-bold">
                 Leaderboard Page Content
               </div>
             )}
 
             {selected === "Library" && (
-              <div className="min-h-375 text-white text-3xl font-bold">
+              <div className=" text-white text-3xl font-bold">
                 Library Page Content
               </div>
             )}
