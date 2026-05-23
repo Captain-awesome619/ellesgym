@@ -315,7 +315,9 @@ useEffect(() => {
 
       {/* CARDS */}
       <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
-        {challengeList.map((days) => (
+        {challengeList.map((days) => {
+          const buttonText = getButtonText(days);
+          return (
           <div
             key={days}
             className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex justify-center w-full min-h-35 gap-4"
@@ -362,14 +364,16 @@ useEffect(() => {
                     setSelectedChallenge(days);
                     setModalOpen(true);
                   }}
-                  className="px-4 py-2 rounded-md border border-white/10 text-[#2ED843] text-[14px] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                 className={`px-4 py-2 rounded-md border border-white/10 text-[14px] cursor-pointer disabled:opacity-60  ${
+                buttonText === "Start Challenge" ? "text-white" : "text-[#2ED843]"
+              }`}
                 >
                   {getButtonText(days)}
                 </button>
               </div>
             </div>
           </div>
-        ))}
+)})}
       </div>
 
       {/* CONFIRMATION MODAL */}
@@ -447,13 +451,13 @@ useEffect(() => {
           },
         }}
       >
-        <h2 className="text-white font-bold text-[18px]">A Challenge is Already currently Active</h2>
+        <h2 className="text-white font-bold text-[18px]">A Challenge is currently Active</h2>
         <p className="text-white/80 mt-2">
           Finish your current challenge before starting a new one.
         </p>
         <button
           onClick={() => setBlockModal(false)}
-          className="mt-4 px-4 py-2 bg-[#2ED843] text-black rounded-md font-semibold hover:opacity-90 transition"
+          className="mt-4 px-4 py-2 bg-[#2ED843] text-black rounded-md font-semibold hover:opacity-90 transition cursor-pointer"
         >
           OK
         </button>
