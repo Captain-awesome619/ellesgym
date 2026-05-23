@@ -318,10 +318,10 @@ useEffect(() => {
         {challengeList.map((days) => (
           <div
             key={days}
-            className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex justify-center w-full min-h-[140px] gap-4"
+            className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex justify-center w-full min-h-35 gap-4"
           >
             {/* Added Next.js standard image dimension signatures to eliminate viewport flickering */}
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <Image src={dumbbell} alt="Dumbbell Icon" width={40} height={40} />
             </div>
 
