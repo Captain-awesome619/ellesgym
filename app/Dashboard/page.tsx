@@ -24,7 +24,7 @@ import Planneer from "../components/planneer";
 import Profile from "../components/profile";
 import Progress from "../components/progress";
 import Challenges from "../components/challenges";
-
+import Libray from "../components/libray";
 
 const navItems = [
   { name: "Dashboard", icon: FiHome },
@@ -64,9 +64,11 @@ function Start() {
   setSelected('Planner')
 }
 const backgroundImages: Record<string, string> = {
+  Dashboard: "shapelift.jpg",
   Profile: "medals.jpg",
   Progress: "progress.jpg",
   Challenges: "challenge.jpg",
+  Library: 'library.jpg'
 };
   return (
     <div className="relative h-screen w-screen flex overflow-hidden">
@@ -214,7 +216,7 @@ const backgroundImages: Record<string, string> = {
 
             {selected === "Library" && (
               <div className=" text-white text-3xl font-bold">
-                Library Page Content
+                <Libray />
               </div>
             )}
 
