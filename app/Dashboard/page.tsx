@@ -69,7 +69,7 @@ const backgroundImages: Record<string, string> = {
   Challenges: "challenge.jpg",
 };
   return (
-    <div className="relative h-full w-screen flex overflow-hidden">
+    <div className="relative h-screen w-screen flex overflow-hidden">
      
      
      <div

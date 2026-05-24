@@ -77,7 +77,7 @@ const noStreak = longestStreakk === 0;
 
  <div
           onClick={() => setActiveTab("settings")}
-          className="cursor-pointer pb-1 lg:text-[35px] text-[25px] font-semibold"
+          className="cursor-pointer pb-1 lg:text-[35px] text-white text-[25px] font-semibold"
           style={{
             borderBottom:
               activeTab === "settings"
@@ -90,7 +90,7 @@ const noStreak = longestStreakk === 0;
 
         <div
           onClick={() => setActiveTab("achievements")}
-          className="cursor-pointer pb-1 lg:text-[35px] text-[25px] font-semibold"
+          className="cursor-pointer pb-1 lg:text-[35px] text-white text-[25px] font-semibold"
           style={{
             borderBottom:
               activeTab === "achievements"
@@ -132,7 +132,7 @@ const noStreak = longestStreakk === 0;
 ) : (
    
    <div className="flex flex-col gap-3">
-      <h2 className="lg:text-[30px] font-normal border-b border-gray-500 w-full pb-2 ">
+      <h2 className="lg:text-[30px] font-normal text-white border-b border-gray-500 w-full pb-2 ">
         Workout Achievements
       </h2>
 {/* PROGRESS CARD */}
@@ -259,7 +259,7 @@ const noStreak = longestStreakk === 0;
 ) : (
 <div className="flex flex-col gap-3">
 
-  <h2 className="lg:text-[30px] font-normal border-b border-gray-500 w-full pb-2">
+  <h2 className="lg:text-[30px] text-white font-normal border-b border-gray-500 w-full pb-2">
     Streak Achievements
   </h2>
 
@@ -382,7 +382,7 @@ const noStreak = longestStreakk === 0;
 
         {activeTab === "settings" && (
           <div>
-            <p>settings</p>
+            <p className="text-white">settings</p>
           </div>
         )}
       </div>
