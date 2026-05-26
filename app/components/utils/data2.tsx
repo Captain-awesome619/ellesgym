@@ -1,6 +1,8 @@
 export const EXERCISE_GUIDES = [
   {
     header: "Push-Up",
+    description:
+      "A bodyweight exercise that strengthens the chest, shoulders, and arms.",
     musclesWorked: [
       {
         group: "Chest",
@@ -10,7 +12,6 @@ export const EXERCISE_GUIDES = [
         group: "Triceps",
         parts: ["Long Head", "Lateral Head"],
       },
-      
       {
         group: "Shoulders",
         parts: ["Front Deltoids"],
@@ -18,7 +19,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Start in a plank position with your hands slightly wider than shoulder-width apart. Keep your body straight from head to heels. Lower your chest toward the floor by bending your elbows, then push yourself back up until your arms are fully extended.",
-      piture : 'pushup.jpg',
+    piture: "/pushup.jpg",
     commonMistakes: [
       "Letting the hips sag or rise too high",
       "Flaring the elbows too far outward",
@@ -29,6 +30,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Deadlift",
+    description:
+      "A powerful compound lift that builds strength in the back, legs, and glutes.",
     musclesWorked: [
       {
         group: "Back",
@@ -49,7 +52,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Stand with your feet hip-width apart and the barbell over the middle of your feet. Bend at the hips and knees to grip the bar. Keep your back straight and chest up while lifting the bar by extending your hips and knees together. Lower the bar in a controlled motion.",
-       piture : 'deadlift.jpg',
+    piture: "/deadlift.jpg",
     commonMistakes: [
       "Rounding the lower back",
       "Pulling with the arms instead of the legs and hips",
@@ -60,6 +63,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Barbell Squat",
+    description:
+      "A lower-body strength exercise that targets the legs, glutes, and core.",
     musclesWorked: [
       {
         group: "Legs",
@@ -69,7 +74,6 @@ export const EXERCISE_GUIDES = [
         group: "Glutes",
         parts: ["Gluteus Maximus", "Gluteus Medius"],
       },
-      
       {
         group: "Calves",
         parts: ["Gastrocnemius"],
@@ -77,7 +81,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Place the barbell across your upper back and stand with your feet shoulder-width apart. Keep your chest up and core tight as you bend your hips and knees to lower yourself until your thighs are parallel to the floor. Push through your heels to return to standing.",
-       piture : 'barbell.jpg',
+    piture: "/barbell.jpg",
     commonMistakes: [
       "Knees collapsing inward",
       "Rounding the back",
@@ -88,6 +92,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Plank",
+    description:
+      "An isometric core exercise that improves stability, posture, and endurance.",
     musclesWorked: [
       {
         group: "Core",
@@ -101,11 +107,10 @@ export const EXERCISE_GUIDES = [
         group: "Back",
         parts: ["Lower Back"],
       },
-      
     ],
     howToPerform:
       "Place your forearms on the ground with elbows directly under your shoulders. Extend your legs behind you and keep your body in a straight line from head to heels. Tighten your core and hold the position steadily.",
-         piture : 'plank.jpg',
+    piture: "/plank.jpg",
     commonMistakes: [
       "Allowing the hips to sag",
       "Raising the hips too high",
@@ -116,6 +121,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Pull-Up",
+    description:
+      "An upper-body exercise that develops back, arm, and grip strength.",
     musclesWorked: [
       {
         group: "Back",
@@ -136,7 +143,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Grip the pull-up bar slightly wider than shoulder-width apart. Hang fully extended, then pull your body upward until your chin passes the bar. Lower yourself slowly back to the starting position.",
-         piture : 'pullup.jpg',
+    piture: "/pullup.jpg",
     commonMistakes: [
       "Swinging the body excessively",
       "Not using full range of motion",
@@ -147,6 +154,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Bench Press",
+    description:
+      "A classic upper-body exercise focused on building chest and tricep strength.",
     musclesWorked: [
       {
         group: "Chest",
@@ -163,7 +172,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Lie flat on a bench with your feet firmly planted on the floor. Grip the bar slightly wider than shoulder-width apart. Lower the bar slowly to your chest, then press it upward until your arms are extended.",
-         piture : 'bench.jpg',
+    piture: "/bench.jpg",
     commonMistakes: [
       "Bouncing the bar off the chest",
       "Lifting the hips off the bench",
@@ -174,6 +183,8 @@ export const EXERCISE_GUIDES = [
 
   {
     header: "Lunges",
+    description:
+      "A unilateral leg exercise that improves balance, coordination, and lower-body strength.",
     musclesWorked: [
       {
         group: "Legs",
@@ -194,7 +205,7 @@ export const EXERCISE_GUIDES = [
     ],
     howToPerform:
       "Stand upright with your feet together. Step one leg forward and lower your hips until both knees are bent at roughly 90 degrees. Push through the front heel to return to the starting position and repeat on the other leg.",
-         piture : 'lunges.jpg',
+    piture: "/lunges.jpg",
     commonMistakes: [
       "Front knee moving too far past the toes",
       "Taking steps that are too short",

@@ -96,7 +96,7 @@ const backgroundImages: Record<string, string> = {
 
         {/* Sidebar */}
         <aside
-          className={`fixed lg:static top-0 left-0 z-40 h-screen w-72 bg-[#1E232B66] backdrop-blur-md flex flex-col justify-between transform transition-transform duration-300
+          className={`fixed lg:static top-0 left-0 z-40 h-screen w-72 bg-[#1E232B66] backdrop-blur-md flex flex-col lg:gap-6 gap-6 transform transition-transform duration-300
           ${menuOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
         >
          
@@ -135,11 +135,11 @@ const backgroundImages: Record<string, string> = {
           </nav>
 
           {/* Bottom */}
-          <div className="p-6 text-white border border-gray-600 lg:h-20 mb-6 w-full flex ">
+          <div className="p-6 text-white border border-gray-600 lg:h-20 mb-6 mt-4 lg:mt-0 w-full flex ">
             
           <div className="flex items-center justify-center gap-3">
 {user ? (
-   <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-[#2ED843] flex  items-center justify-center lg:text-[20px] text-[17px] text-black font-bold" >
+   <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-[#2ED843] flex  items-center justify-center lg:text-[20px] text-[17px] text-black font-bold " >
     {initial2 || initial}
      </div>
 ) :  <div className="w-10 h-10 rounded-full bg-gray-500" />}
