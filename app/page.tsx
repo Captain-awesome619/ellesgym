@@ -293,7 +293,7 @@ const handleFacebookLogin = () => {
 
 
 <form className="flex flex-col gap-4  items-center justify-center w-[90%]"
-  onSubmit={handleLogin}
+  /* onlogin here  */
 >
   
 <div className=" gap-4  flex flex-col w-full">
@@ -371,7 +371,7 @@ const handleFacebookLogin = () => {
 <div className="flex flex-col gap-4">
 <h4 className="text-[15px] font-normal text-[#ffffff] ">Log in with</h4>
 <div className="flex items-center justify-center gap-4">
-  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer"  onClick={signInWithGoogle} />
+  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer"  /* onclick here  */ />
   or
   <Image src={facebook} height={30} width={30} alt="Facebook" className="cursor-pointer" onClick={handleFacebookLogin} />
    </div>
@@ -401,7 +401,7 @@ const handleFacebookLogin = () => {
 
 
 <form className="flex flex-col gap-4  items-center justify-center w-[90%]"
-onSubmit={Handlesignup}
+/* onsubmit here here  */
 >
 <div className="gap-4 flex flex-col w-full">
 
@@ -477,7 +477,7 @@ onSubmit={Handlesignup}
 <div className="flex flex-col gap-4">
 <h4 className="text-[15px] font-normal text-[#ffffff] "> Sign up with</h4>
 <div className="flex items-center justify-center gap-4">
-  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer" onClick={signInWithGoogle}/>
+  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer" /* onclick here  */ />
   or
   <Image src={facebook} height={30} width={30} alt="Facebook" className="cursor-pointer"  onClick={handleFacebookLogin}/>
    </div>
@@ -535,9 +535,8 @@ onSubmit={Handlesignup}
       </button>
 
       <button
-        onClick={handleForgotPassword}
+         /* onclick here  */
         className="flex-1 py-3 rounded-lg  text-black font-semibold cursor-pointer bg-[#2ED843]  "
-      
       >
         {recoveryLoading ? <ClipLoader color='white' size={20} /> : "Send Link"}
       </button>

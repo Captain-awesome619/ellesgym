@@ -68,9 +68,6 @@ const Challenges = () => {
     setRestDays(missingDays);
   }, [data]);
 
-  // =========================================
-  // PARSE CHALLENGES & PROCESS METRICS
-  // =========================================
   useEffect(() => {
     if (!data) return;
 
@@ -109,12 +106,6 @@ const Challenges = () => {
     setCompletedMap(newCompletedMap);
   }, [data]);
 
-  // =========================================
-  // ISOLATED BACKGROUND AUTOMATED PROGRESSION CHECK
-  // =========================================
-  // =========================================
-// FIXED: BACKGROUND AUTOMATED PROGRESSION CHECK (WITH REST DAY PROTECTION)
-// =========================================
 useEffect(() => {
   if (!data || !data2?.documents?.[0] || !user?.$id) return;
 
