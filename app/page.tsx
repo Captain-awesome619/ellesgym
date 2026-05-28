@@ -5,7 +5,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useState,useEffect } from "react";
 import google from '../public/google.svg'
 import facebook from '../public/facebook.svg'
-import { appwriteConfig, getCurrentUser, signInWithGoogle } from "./lib/appwrite";
+import { appwriteConfig, getCurrentUser, handleGoogleLogin, signInWithGoogle } from "./lib/appwrite";
 import { createUser, signIn } from "./lib/appwrite";
 import { useGlobalContext } from "./context/globalprovider";
 import { useRouter } from 'next/navigation'
@@ -293,7 +293,7 @@ const handleFacebookLogin = () => {
 
 
 <form className="flex flex-col gap-4  items-center justify-center w-[90%]"
-  /* onlogin here  */
+onSubmit={handleLogin}
 >
   
 <div className=" gap-4  flex flex-col w-full">
@@ -371,7 +371,7 @@ const handleFacebookLogin = () => {
 <div className="flex flex-col gap-4">
 <h4 className="text-[15px] font-normal text-[#ffffff] ">Log in with</h4>
 <div className="flex items-center justify-center gap-4">
-  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer"  /* onclick here  */ />
+  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer"  onClick={handleGoogleLogin} />
   or
   <Image src={facebook} height={30} width={30} alt="Facebook" className="cursor-pointer" onClick={handleFacebookLogin} />
    </div>
@@ -401,7 +401,7 @@ const handleFacebookLogin = () => {
 
 
 <form className="flex flex-col gap-4  items-center justify-center w-[90%]"
-/* onsubmit here here  */
+onSubmit={Handlesignup}
 >
 <div className="gap-4 flex flex-col w-full">
 
@@ -477,7 +477,7 @@ const handleFacebookLogin = () => {
 <div className="flex flex-col gap-4">
 <h4 className="text-[15px] font-normal text-[#ffffff] "> Sign up with</h4>
 <div className="flex items-center justify-center gap-4">
-  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer" /* onclick here  */ />
+  <Image src={google} height={30} width={30} alt="Google" className="cursor-pointer"  onClick={handleGoogleLogin}/>
   or
   <Image src={facebook} height={30} width={30} alt="Facebook" className="cursor-pointer"  onClick={handleFacebookLogin}/>
    </div>
