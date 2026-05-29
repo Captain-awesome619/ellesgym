@@ -166,7 +166,10 @@ const backgroundImages: Record<string, string> = {
 
             <div className="ml-auto flex items-center gap-5">
               
-              <FiSettings className="text-white text-2xl cursor-pointer" />
+            <FiSettings
+  className="text-white text-2xl cursor-pointer"
+  onClick={() => setSelected("Profile")}
+/>
               <IoNotifications className="text-white text-2xl cursor-pointer" />
               {user ? (
    <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-[#2ED843] flex  items-center justify-center lg:text-[20px] text-[17px] font-bold  text-black" >
