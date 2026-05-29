@@ -5,12 +5,11 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { useState,useEffect } from "react";
 import google from '../public/google.svg'
 import facebook from '../public/facebook.svg'
-import { appwriteConfig, getCurrentUser, handleGoogleLogin, signInWithGoogle } from "./lib/appwrite";
+import { appwriteConfig, getCurrentUser,  signInWithGoogle } from "./lib/appwrite";
 import { createUser, signIn } from "./lib/appwrite";
 import { useGlobalContext } from "./context/globalprovider";
 import { useRouter } from 'next/navigation'
 import { ClipLoader } from 'react-spinners';
-import { useSearchParams } from "next/navigation";
 import { accountt } from "./lib/appwrite";
 import Modal from 'react-modal';
 import VerifyEmailHandler from "./context/Verifyemailhandler";

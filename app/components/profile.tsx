@@ -4,6 +4,7 @@ import Image from "next/image";
 import workout from '../../public/workout.svg'
 import habit from '../../public/habitt.svg'
 import { FaQuestionCircle } from "react-icons/fa";
+import Settings from "./utils/settings";
 const Profile = () => {
   const {
     completeCount,
@@ -181,7 +182,7 @@ const noStreak = longestStreakk === 0;
           <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className=" h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
-                <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">First Workout</h3>
+                <h3 className="font-semibold text-white lg:text-[22px] text-[18px]">First Workout</h3>
                 <h4 className="font-normal text-white lg:text-[17px] text-[15px] text-center">Completed your first workout</h4>
             </div>
           </div>
@@ -191,7 +192,7 @@ const noStreak = longestStreakk === 0;
           <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
-                <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">First 5 Workouts</h3>
+                <h3 className="font-semibold text-white lg:text-[22px] text-[18px]">First 5 Workouts</h3>
                 <h4 className="font-normal text-white lg:text-[17px] text-[15px] text-center">Completed your first 5 workouts</h4>
             </div>
           </div>
@@ -201,7 +202,7 @@ const noStreak = longestStreakk === 0;
           <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
-                <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">First 10 Workouts</h3>
+                <h3 className="font-semibold text-white lg:text-[22px] text-[18px]">First 10 Workouts</h3>
                 <h4 className="font-normal text-white lg:text-[17px] text-[15px] text-center">Completed your first 10 workouts</h4>
             </div>
           </div>
@@ -211,7 +212,7 @@ const noStreak = longestStreakk === 0;
           <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
-                <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">First 15 Workouts</h3>
+                <h3 className="font-semibold text-white lg:text-[22px] text-[18px]">First 15 Workouts</h3>
                 <h4 className="font-normal text-white lg:text-[17px] text-[15px] text-center">Completed your first 15 workouts</h4>
             </div>
           </div>
@@ -221,7 +222,7 @@ const noStreak = longestStreakk === 0;
           <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
-                <h3 className="font-semibold text-white lg:text-[25px] text-[18px]">First 20 Workouts</h3>
+                <h3 className="font-semibold text-white lg:text-[22px] text-[18px]">First 20 Workouts</h3>
                 <h4 className="font-normal text-white lg:text-[17px] text-[15px] text-center">Completed your first 20 workouts</h4>
             </div>
           </div>
@@ -382,7 +383,7 @@ const noStreak = longestStreakk === 0;
 
         {activeTab === "settings" && (
           <div>
-            <p className="text-white">settings</p>
+           <Settings />
           </div>
         )}
       </div>
