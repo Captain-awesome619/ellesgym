@@ -211,7 +211,7 @@ useEffect(() => {
     <div className="grid gap-6">
 
       <div className="flex flex-col gap-1">
-        <h2 className="font-semibold lg:text-[40px] text-[20px] text-white">
+        <h2 className="dark:font-semibold font-bold lg:text-[40px] text-[20px] text-white dark:text-white">
           Welcome, {name || name2}
         </h2>
 
@@ -227,7 +227,7 @@ useEffect(() => {
 ) : hasSession ? (
   <div className="flex flex-col gap-5 w-full lg:items-center ">
     <div className="flex lg:flex-row flex-col lg:gap-8 gap-6 w-full  ">
-      <div className="flex flex-col p-5 bg-white/5 backdrop-blur-md lg:w-70 gap-10 rounded-lg">
+      <div className="flex flex-col p-5 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm lg:w-70 gap-10 rounded-lg">
         <div className="flex justify-between items-center w-full">
           <h4 className="font-semibold lg:text-[18px] text-[15px] text-white">
             Daily Streak
@@ -315,7 +315,7 @@ useEffect(() => {
     </h4>
     <div className="lg:px-4 py-[0.5] px-3 bg-black flex items-center justify-center rounded-xl">
   <h5 className="lg:text-[15px] text-[13px] font-normal text-[#2ED843] ">
- DAY {todayWorkout?.day}
+ DAY {todayWorkout?.day - 1}
 </h5>
 </div>
   </div>

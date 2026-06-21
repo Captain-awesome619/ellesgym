@@ -183,7 +183,7 @@ const Libray = () => {
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
           {filteredExercises.map((exercise, index) => (
             <div key={index}>
-              <div className="flex flex-col gap-4 bg-white/5 backdrop-blur-md border border-white/10 h-90 rounded-lg">
+              <div className="flex flex-col gap-4 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border-black dark:border-white  h-90 rounded-lg">
                 <div
                   className="w-full h-[70%]"
                   style={{

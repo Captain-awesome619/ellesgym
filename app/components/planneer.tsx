@@ -320,8 +320,8 @@ const isToday = (date: Date) => {
 
 
   return (
-    <div className="py-4 lg:p-6 min-h-screen">
-  {console.log(data)}
+    <div className="py-4 lg:px-6 min-h-screen">
+
        {view === "calendar" && (
       <>
       {loading ? (
@@ -342,7 +342,7 @@ const isToday = (date: Date) => {
               {chunkIntoWeeks(workoutPlan).map((week, weekIndex) => (
                 <div key={weekIndex} className="mb-6 grid items-start justify-start">
 
-                 <div className="hidden lg:grid grid-cols-7 border-t border-b border-gray-800 py-4 mb-1 ">
+                 <div className="hidden lg:grid grid-cols-7 border-t border-b darK:border-gray-800 border-white py-4 mb-1 ">
   {week.map((_, i) => {
     const globalIndex = weekIndex * 7 + i;
     const date = getDayDate(globalIndex);

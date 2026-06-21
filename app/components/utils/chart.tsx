@@ -82,7 +82,7 @@ const Chart = (): ReactElement => {
   // UI
   // ======================================
   return (
-    <div className="w-full lg:h-120 bg-white/5 backdrop-blur-md h-70 border-white/10 rounded-xl p-4">
+    <div className="w-full lg:h-120 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm h-70 border-white/10 rounded-xl p-4">
     
       <h2 className="text-white font-bold mb-4">
         Weekly Progress

@@ -131,11 +131,11 @@ const Settings = () => {
                   setDeleteModal(true);
                 }
               }}
-              className="group flex items-center justify-between bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 cursor-pointer hover:border-[#2ED843]/40 transition-all duration-300"
+              className="group flex items-center justify-between  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-2xl p-5 cursor-pointer hover:border-[#2ED843]/40 transition-all duration-300"
             >
               <div className="flex items-center gap-4">
                 {/* icon */}
-                <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-[22px] border border-white/10">
+                <div className="w-12 h-12 rounded-xl dark:bg-black bg-gray-700 flex items-center justify-center text-[22px] border border-white/10">
                   <span className={item.color}>{item.icon}</span>
                 </div>
 
@@ -152,7 +152,7 @@ const Settings = () => {
               </div>
 
               {/* arrow */}
-              <IoChevronForward className="text-white/40 text-[20px] group-hover:text-[#2ED843] transition-all duration-300" />
+              <IoChevronForward className="dark:text-white/40 text-[20px] text-white group-hover:text-[#2ED843] transition-all duration-300" />
             </div>
           ))}
         </div>
@@ -162,29 +162,29 @@ const Settings = () => {
       <Modal
         isOpen={logoutModal}
         onRequestClose={() => setLogoutModal(false)}
-        className="bg-[#0B0B0B] border border-white/10 rounded-2xl p-6 max-w-md mx-auto mt-40 outline-none"
+        className="dark:bg-[#0B0B0B] bg-white border border-white/10 rounded-2xl p-6 max-w-md mx-auto mt-40 outline-none"
         overlayClassName="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-start z-50 px-4"
       >
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-white text-[22px] font-semibold">
+            <h2 className="dark:text-white text-black text-[22px] font-semibold">
               Log Out
             </h2>
 
             <IoClose
               onClick={() => setLogoutModal(false)}
-              className="text-white text-[24px] cursor-pointer"
+              className="dark:text-white text-black text-[24px] cursor-pointer"
             />
           </div>
 
-          <p className="text-white/60 text-[15px] leading-relaxed">
+          <p className="dark:text-white text-black/90 text-[15px] leading-relaxed">
             Are you sure you want to log out of your account?
           </p>
 
           <div className="flex gap-3">
             <button
               onClick={() => setLogoutModal(false)}
-              className="flex-1 h-12 rounded-xl bg-white/10 text-white font-semibold cursor-pointer"
+              className="flex-1 h-12 rounded-xl dark:bg-white/10 bg-black text-white font-semibold cursor-pointer"
             >
               Cancel
             </button>
@@ -203,29 +203,29 @@ const Settings = () => {
       <Modal
         isOpen={deleteModal}
         onRequestClose={() => setDeleteModal(false)}
-        className="bg-[#0B0B0B] border border-white/10 rounded-2xl p-6 max-w-md mx-auto mt-40 outline-none"
+        className="dark:bg-[#0B0B0B] bg-white border border-white/10 rounded-2xl p-6 max-w-md mx-auto mt-40 outline-none"
         overlayClassName="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-start z-50 px-4"
       >
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-white text-[22px] font-semibold">
+            <h2 className="dark:text-white text-black text-[22px] font-semibold">
               Delete Account
             </h2>
 
             <IoClose
               onClick={() => setDeleteModal(false)}
-              className="text-white text-[24px] cursor-pointer"
+              className="dark:text-white text-black text-[24px] cursor-pointer"
             />
           </div>
 
-          <p className="text-white/60 text-[15px] leading-relaxed">
+          <p className="dark:text-white text-black/90 text-[15px] leading-relaxed">
             This action is permanent and cannot be undone.
           </p>
 
           <div className="flex gap-3">
             <button
               onClick={() => setDeleteModal(false)}
-              className="flex-1 h-12 rounded-xl bg-white/10 text-white font-semibold cursor-pointer"
+              className="flex-1 h-12 rounded-xl dark:bg-white/10 bg-black text-white font-semibold cursor-pointer"
             >
               Cancel
             </button>

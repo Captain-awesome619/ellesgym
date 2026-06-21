@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import GlobalProvider from "./context/globalprovider";
+import { ThemeProvider } from "./context/themeprovdier";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +34,14 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
+      suppressHydrationWarning // 👈 Added this to stop the hydration error trace
     >
       <body className="min-h-full flex flex-col font-inter overflow-x-hidden">
-     <GlobalProvider>
-          {children}
-      </GlobalProvider>
+        <ThemeProvider>
+          <GlobalProvider>
+            {children}
+          </GlobalProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

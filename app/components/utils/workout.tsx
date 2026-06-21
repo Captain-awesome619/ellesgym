@@ -451,7 +451,7 @@ if (showSuccessView) {
             Workout Completed
           </h1>
 
-          <p className="text-white/70 text-lg">
+          <p className="dark:text-white/70 text-white text-lg">
             Great job - you're one step closer
             to your goal.
           </p>
@@ -460,7 +460,7 @@ if (showSuccessView) {
         {/* STATS */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full max-w-2xl">
           {/* DURATION */}
-          <div className="bg-white/10 backdrop-blur-none border border-white/10 rounded-2xl py-4  flex flex-col items-center justify-center gap-2">
+          <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-2xl py-4  flex flex-col items-center justify-center gap-2">
          <div className="flex gap-4 items-center justify-center">
            <div className="flex items-center justify-center">
          <Image 
@@ -484,7 +484,7 @@ if (showSuccessView) {
 
 
    {/* EXERCISES */}
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-2">
+          <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border rounded-2xl p-6 flex flex-col items-center justify-center gap-2">
 
          
 
@@ -499,7 +499,7 @@ if (showSuccessView) {
           </div>
 
           {/* EXERCISES */}
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2">
+          <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-2xl py-4 flex flex-col items-center justify-center gap-2">
 <div  className="flex gap-4 items-center justify-center" >
            <Image 
           src={weight}
@@ -534,7 +534,7 @@ if (showSuccessView) {
  
 <div className="lg:hidden flex">
  {showNewBadge && (
-    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+    <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
       
       {/* PLACEHOLDER BADGE */}
      <Image 
@@ -565,7 +565,7 @@ if (showSuccessView) {
 
 
   {/* PROGRESS CARD */}
-  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col gap-5 justify-center">
+  <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border  rounded-3xl p-8 w-full flex flex-col gap-5 justify-center">
     {/* PROGRESS BAR */}
     <div className="w-full h-2 bg-white rounded-full overflow-hidden">
       <div
@@ -606,7 +606,7 @@ if (showSuccessView) {
 
 <div className="lg:flex hidden">
  {showNewBadge && (
-    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
+    <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-3xl p-8 w-full flex flex-col items-center gap-3">
       
       {/* PLACEHOLDER BADGE */}
      <Image 
@@ -715,21 +715,21 @@ if (showSuccessView) {
         onRequestClose={() =>
           setShowCompleteModal(false)
         }
-        className="bg-[#111111] border border-[#2ED843] rounded-2xl p-8 w-[90%] max-w-md mx-auto outline-none"
+        className="dark:bg-[#111111] bg-white border dark:border-[#2ED843] border-black rounded-2xl p-8 w-[90%] max-w-md mx-auto outline-none"
         overlayClassName="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
       >
         <div className="flex flex-col items-center text-center gap-5">
-          <div className="w-20 h-20 rounded-full bg-[#2ED843] flex items-center justify-center">
-            <span className="text-black text-4xl font-bold">
+          <div className="w-20 h-20 rounded-full dark:bg-[#2ED843] bg-black flex items-center justify-center">
+            <span className="dark:text-black text-white text-4xl font-bold">
               ✓
             </span>
           </div>
 
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold dark:text-white text-black ">
             Workout Complete
           </h2>
 
-          <p className="text-white/70">
+          <p className="text-black dark:text-white/70">
             Great job. You completed all
             your sets for today.
           </p>
@@ -740,7 +740,7 @@ if (showSuccessView) {
                 false
               )
             }
-            className="w-full bg-[#2ED843] text-black font-bold py-3 rounded-xl cursor-pointer"
+            className="w-full dark:bg-[#2ED843] bg-black text-white font-bold py-3 rounded-xl cursor-pointer"
           >
             Awesome 🚀
           </button>
@@ -871,14 +871,14 @@ if (showSuccessView) {
           </button>
 
           <div className="flex flex-col items-center justify-center gap-2 lg:items-start lg:justify-start mb-5">
-            <h2 className="font-bold text-[15px] lg:text-[30px] text-white">
+            <h2 className="font-bold text-[15px] lg:text-[30px] text-white ">
               <span className="text-[#2ED843]">
                 Goal:
               </span>{" "}
               {item.goal}
             </h2>
 
-            <h3 className="font-semibold text-[14px] lg:text-[20px] text-white">
+            <h3 className="font-semibold text-[14px] lg:text-[20px] text-white ">
               <span className="text-[#2ED843]">
                 Routine:
               </span>{" "}
@@ -941,7 +941,7 @@ if (showSuccessView) {
               ) => (
                 <div
                   key={idx}
-                  className="bg-white/5 backdrop-blur-md border border-white/10 text-white  rounded-xl p-4"
+                  className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-smborder  text-white  rounded-xl p-4"
                 >
                   {/* EXERCISE NAME */}
                   <h4 className="font-bold text-lg mb-4 text-white">

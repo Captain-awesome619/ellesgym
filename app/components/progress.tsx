@@ -136,7 +136,7 @@ const Progress = () => {
       </h4>
 
       <div className="flex gap-4 items-center">
-        <div className="px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col items-center justify-center w-70 h-30 gap-3">
+        <div className="px-4 py-2 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col items-center justify-center w-70 h-30 gap-3">
           <h4 className="font-normal lg:text-[15px] text-[15px] text-white">
             Total Workouts Completed
           </h4>
@@ -146,7 +146,7 @@ const Progress = () => {
           </h4>
         </div>
 
-        <div className="px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col items-center justify-center w-70 h-30 gap-3">
+        <div className="px-4 py-2 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col items-center justify-center w-70 h-30 gap-3">
           <h4 className="font-normal lg:text-[15px] text-[15px] text-white">
             Current Streak
           </h4>
@@ -163,7 +163,7 @@ const Progress = () => {
 
       <div className="flex lg:flex-row flex-col gap-4">
         {/* WORKOUT BAR CHART */}
-        <div className="lg:w-[50%] lg:h-120 bg-white/5 backdrop-blur-md h-70 border border-white/10 rounded-xl p-4">
+        <div className="lg:w-[50%] lg:h-120 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm h-70 border border-white/10 rounded-xl p-4">
           <h2 className="text-white font-bold mb-4">
           Workout Weekly Progress
           </h2>
@@ -197,7 +197,7 @@ const Progress = () => {
         </div>
 
         {/* HABIT LINE GRAPH */}
-        <div className="lg:w-[50%] lg:h-120 bg-white/5 backdrop-blur-md h-70 border border-white/10 rounded-xl p-4">
+        <div className="lg:w-[50%] lg:h-120 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm h-70 border border-white/10 rounded-xl p-4">
           <h2 className="text-white font-bold mb-4">
            Habit Trend
           </h2>

@@ -223,7 +223,7 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
   // UI (UNCHANGED)
   // =========================================
   return (
-    <div className=" bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
+    <div className="dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-2xl lg:w-80 w-full lg:min-h-125 p-5 flex flex-col">
 
       <h2 className="text-white font-bold text-[22px] mb-6">
         Habit Checklist
@@ -306,7 +306,7 @@ const HabitChecklist = ({ data, onUpdate }: any) => {
       )}
 
       {completedToday ? (
-        <div className="mt-5 text-center text-[#2ED843] border border-white/10 p-4 rounded-lg">
+        <div className="mt-5 text-center text-white dark:text-[#2ED843] border border-white/10 p-4 rounded-lg">
           🎉 You're done for today <br />
           Come back tomorrow to continue your streak
         </div>

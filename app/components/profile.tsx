@@ -118,7 +118,7 @@ const noStreak = longestStreakk === 0;
 {
    noWorkouts ? (
     
-  <div className="p-6 bg-white/5 border border-white/10 rounded-lg text-center flex flex-col gap-3 items-center justify-center lg:w-[50%]">
+  <div className="p-6 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border text-center flex flex-col gap-3 items-center justify-center lg:w-[50%]">
     <FaQuestionCircle className="text-[#2ED843] text-[30px]" />
 
     <h3 className="text-white text-[20px] font-semibold">
@@ -133,13 +133,13 @@ const noStreak = longestStreakk === 0;
 ) : (
    
    <div className="flex flex-col gap-3">
-      <h2 className="lg:text-[30px] font-normal text-white border-b border-gray-500 w-full pb-2 ">
+      <h2 className="lg:text-[30px] font-normal text-white border-b dark:border-gray-500 border-white w-full pb-2 ">
         Workout Achievements
       </h2>
 {/* PROGRESS CARD */}
 
 
-<div className="px-4 py-5 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col gap-5 lg:gap-6 shadow-lg">
+<div className="px-4 py-5 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col gap-5 lg:gap-6 shadow-lg">
 
   {/* TEXT */}
   <div className="flex justify-between items-center">
@@ -179,7 +179,7 @@ const noStreak = longestStreakk === 0;
 </div>
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {completeCount >= 1 && (
-          <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+          <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className=" h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
                 <h3 className="font-semibold text-white lg:text-[22px] text-[16px]">First Workout</h3>
@@ -189,7 +189,7 @@ const noStreak = longestStreakk === 0;
         )}
 
         {completeCount >= 5 && (
-          <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+          <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
                 <h3 className="font-semibold text-white lg:text-[22px] text-[16px]">First 5 Workouts</h3>
@@ -199,7 +199,7 @@ const noStreak = longestStreakk === 0;
         )}
 
         {completeCount >= 10 && (
-          <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+          <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
                 <h3 className="font-semibold text-white lg:text-[22px] text-[16px]">First 10 Workouts</h3>
@@ -209,7 +209,7 @@ const noStreak = longestStreakk === 0;
         )}
 
         {completeCount >= 15 && (
-          <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+          <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
                 <h3 className="font-semibold text-white lg:text-[22px] text-[16px]">First 15 Workouts</h3>
@@ -219,7 +219,7 @@ const noStreak = longestStreakk === 0;
         )}
 
         {completeCount >= 20 && (
-          <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+          <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
             <Image src={workout} alt="Workout" className="w-20 h-20" />
             <div className="flex flex-col gap-2 items-center justify-center">
                 <h3 className="font-semibold text-white lg:text-[22px] text-[16px]">First 20 Workouts</h3>
@@ -244,7 +244,7 @@ const noStreak = longestStreakk === 0;
 
 {
     noStreak ? (
-  <div className="p-6 bg-white/5 border border-white/10 rounded-lg text-center flex flex-col gap-3 items-center justify-center lg:w-[50%]">
+  <div className="p-6  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg text-center flex flex-col gap-3 items-center justify-center lg:w-[50%]">
     <FaQuestionCircle className="text-[#2ED843] text-[30px]" />
 
     <h3 className="text-white text-[20px] font-semibold">
@@ -260,12 +260,12 @@ const noStreak = longestStreakk === 0;
 ) : (
 <div className="flex flex-col gap-3">
 
-  <h2 className="lg:text-[30px] text-white font-normal border-b border-gray-500 w-full pb-2">
+  <h2 className="lg:text-[30px] text-white font-normal border-b dark:border-gray-500  border-whitew-full pb-2">
     Streak Achievements
   </h2>
 
   {/* PROGRESS CARD */}
-  <div  className="px-4 py-5 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col gap-5 lg:gap-6 shadow-lg">
+  <div  className="px-4 py-5  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col gap-5 lg:gap-6 shadow-lg">
 
     {/* TEXT */}
     <div className="flex justify-between items-center">
@@ -303,7 +303,7 @@ const noStreak = longestStreakk === 0;
   <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
 
     {longestStreakk >= 1 && (
-      <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+      <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
         <Image src={habit} alt="Streak" className="w-20 h-20" />
         <div className="flex flex-col gap-2 items-center justify-center">
           <h3 className="font-semibold text-white lg:text-[25px] text-[16px]">
@@ -317,7 +317,7 @@ const noStreak = longestStreakk === 0;
     )}
 
     {longestStreakk >= 5 && (
-      <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+      <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
         <Image src={habit} alt="Streak" className="w-20 h-20" />
         <div className="flex flex-col gap-2 items-center justify-center">
           <h3 className="font-semibold text-white lg:text-[25px] text-[16px]">
@@ -331,7 +331,7 @@ const noStreak = longestStreakk === 0;
     )}
 
     {longestStreakk >= 10 && (
-      <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+      <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
         <Image src={habit} alt="Streak" className="w-20 h-20" />
         <div className="flex flex-col gap-2 items-center justify-center">
           <h3 className="font-semibold text-white lg:text-[25px] text-[16px]">
@@ -345,7 +345,7 @@ const noStreak = longestStreakk === 0;
     )}
 
     {longestStreakk >= 15 && (
-      <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+      <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
         <Image src={habit} alt="Streak" className="w-20 h-20" />
         <div className="flex flex-col gap-2 items-center justify-center">
           <h3 className="font-semibold text-white lg:text-[25px] text-[16px]">
@@ -359,7 +359,7 @@ const noStreak = longestStreakk === 0;
     )}
 
     {longestStreakk >= 20 && (
-      <div className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
+      <div className="p-4  dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex flex-col h-65 items-center justify-center gap-4 shadow-lg">
         <Image src={habit} alt="Streak" className="w-20 h-20" />
         <div className="flex flex-col gap-2 items-center justify-center">
           <h3 className="font-semibold text-white lg:text-[25px] text-[16px]">

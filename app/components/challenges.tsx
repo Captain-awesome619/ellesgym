@@ -295,7 +295,7 @@ if (active.lastUpdated) {
       </div>
 
       {/* METRICS RENDERING BLOCK */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm border border-white/10 rounded-xl">
         <div className="flex flex-col gap-1">
           <span className="text-white/60 text-[12px] uppercase tracking-wider font-semibold">
             Challenge Workouts
@@ -329,7 +329,7 @@ if (active.lastUpdated) {
           return (
           <div
             key={days}
-            className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg flex justify-center w-full min-h-35 gap-4"
+            className="px-4 py-3 dark:bg-white/5 bg-black/70 dark:backdrop-blur-md backdrop-blur-sm rounded-lg flex justify-center w-full min-h-35 gap-4"
           >
             {/* Added Next.js standard image dimension signatures to eliminate viewport flickering */}
             <div className="shrink-0">
